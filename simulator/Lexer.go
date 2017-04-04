@@ -44,6 +44,8 @@ func (l *Lexer) Lex() []Token {
 			i = l.LexWS(i)
 		} else if isNumber(c) {
 			i = l.LexNumber(i)
+		} else if c == '#' {
+			i = l.SkipComment(i)
 		} else {
 			i = l.LexWord(i)
 		}
@@ -53,8 +55,8 @@ func (l *Lexer) Lex() []Token {
 }
 
 func isSymbol(c byte) bool {
-	return (33 <= c && c <= 47) || (58 <= c && c <= 64) || ((91 <= c && c <=
-		96) && c != 95) || (123 <= c && c <= 126)
+	return (33 <= c && c <= 47 && c != 35) || (58 <= c && c <= 64) || ((91 <=
+		c && c <= 96) && c != 95) || (123 <= c && c <= 126)
 }
 
 func isWS(c byte) bool {
@@ -72,6 +74,21 @@ func isKeyword(s string) bool {
 		}
 	}
 	return false
+}
+
+func (l *Lexer) SkipComment(index int) int {
+
+	newIndex := index
+
+	for i := index; i < len(l.Raw); i++ {
+		c := l.Raw[i]
+		if c == '\n' {
+			break
+		}
+		newIndex = i
+	}
+
+	return newIndex + 1
 }
 
 func (l *Lexer) LexSymbol(index int) int {
@@ -183,7 +200,8 @@ func (l *Lexer) LexWord(index int) int {
 }
 
 func (l *Lexer) PrintTokens() {
+	fmt.Println("Tokens: ")
 	for _, tk := range l.Tokens {
-		fmt.Println(Categories[tk.Category], " ", tk.ID)
+		fmt.Println("\t", Categories[tk.Category], " ", tk.ID)
 	}
 }
