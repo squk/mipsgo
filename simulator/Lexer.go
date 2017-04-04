@@ -129,9 +129,6 @@ func (l *Lexer) LexWS(index int) int {
 		newIndex = i
 	}
 
-	//token := Token{WHITESPACE, collected}
-	//l.Tokens = append(l.Tokens, token)
-
 	return newIndex + 1
 }
 
