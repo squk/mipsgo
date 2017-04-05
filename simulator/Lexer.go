@@ -63,7 +63,7 @@ func (l *Lexer) Lex() []Token {
 }
 
 func isSymbol(c byte) bool {
-	return (33 <= c && c <= 47 && c != 35) || (58 <= c && c <= 64) || ((91 <=
+	return (33 <= c && c <= 47 && c != 35 && c != 45) || (58 <= c && c <= 64) || ((91 <=
 		c && c <= 96) && c != 95) || (123 <= c && c <= 126)
 }
 
@@ -78,7 +78,7 @@ func isWS(c byte) bool {
 }
 
 func isNumber(c byte) bool {
-	return c >= '0' && c <= '9'
+	return (c >= '0' && c <= '9') || c == '-'
 }
 
 func isKeyword(s string) bool {
@@ -95,9 +95,10 @@ func (l *Lexer) SkipComment(index int) int {
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
+
 		if c == '\n' {
 			// marks HasNL flag on token preceding the comment
-			l.Tokens[i].HasNL = true
+			l.Tokens[len(l.Tokens)-1].HasNL = true
 			break
 		}
 		newIndex = i
@@ -159,7 +160,7 @@ func (l *Lexer) LexNumber(index int) int {
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
 
-		if c >= '0' && c <= '9' {
+		if (c >= '0' && c <= '9') || c == '-' {
 			collected += string(c)
 		} else if c == 'E' || c == 'e' {
 			i++
