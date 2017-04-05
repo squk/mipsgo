@@ -1,6 +1,10 @@
 package simulator
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 const (
 	WHITESPACE = iota
@@ -21,6 +25,8 @@ var Categories = map[int]string{
 type Token struct {
 	Category int
 	ID       string
+	Value    int
+	HasNL    bool
 }
 
 type Lexer struct {
@@ -59,8 +65,14 @@ func isSymbol(c byte) bool {
 		c && c <= 96) && c != 95) || (123 <= c && c <= 126)
 }
 
+// ' '     (0x20)  space (SPC)
+// '\t'    (0x09)  horizontal tab (TAB)
+// '\n'    (0x0a)  newline (LF)
+// '\v'    (0x0b)  vertical tab (VT)
+// '\f'    (0x0c)  feed (FF)
+// '\r'    (0x0d)  carriage return (CR)
 func isWS(c byte) bool {
-	return c == 0x20 || c == 0x0A
+	return c == 0x20 || c == 0x09 || c == 0x0A || c == 0x0d
 }
 
 func isNumber(c byte) bool {
@@ -77,12 +89,12 @@ func isKeyword(s string) bool {
 }
 
 func (l *Lexer) SkipComment(index int) int {
-
 	newIndex := index
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
 		if c == '\n' {
+			l.Tokens[len(l.Tokens)].HasNL = true
 			break
 		}
 		newIndex = i
