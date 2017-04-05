@@ -13,7 +13,7 @@ var _ = Describe("Parser", func() {
 	It("parses instructions and arguments", func() {
 		sim = NewSimulator(`sub $s0, $s1, $s2
 							add $t0, $t1, $t2
-							sll $t1 4`)
+							sll $t1, $t1, 4`)
 		sim.PreProcess()
 		Expect(sim.Parser.Instructions[0]).To(Equal(Instruction{
 			OpCode: 39, RD: 16, RS: 17, RT: 18,
@@ -22,7 +22,7 @@ var _ = Describe("Parser", func() {
 			OpCode: 1, RD: 8, RS: 9, RT: 10,
 		}))
 		Expect(sim.Parser.Instructions[2]).To(Equal(Instruction{
-			OpCode: 30, RD: 9, RS: -1, RT: -1, Immediate: 4,
+			OpCode: 30, RD: 9, RS: 9, RT: -1, Immediate: 4,
 		}))
 	})
 })
