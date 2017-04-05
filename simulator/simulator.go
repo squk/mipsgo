@@ -77,6 +77,8 @@ func (s *Simulator) RunInstruction(instr Instruction) {
 		s.VM.ADD(instr)
 	case "sub":
 		s.VM.SUB(instr)
+	case "slt":
+		s.VM.SLT(instr)
 	default:
 		fmt.Println("no op found")
 	}
