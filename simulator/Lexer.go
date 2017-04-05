@@ -235,6 +235,6 @@ func (l *Lexer) LexWord(index int) int {
 func (l *Lexer) PrintTokens() {
 	fmt.Println("Tokens: ")
 	for _, tk := range l.Tokens {
-		fmt.Println("\t", Categories[tk.Category], "\t", tk.ID)
+		fmt.Println("\t", Categories[tk.Category], "\t", tk.ID, "\t", tk.HasNL)
 	}
 }

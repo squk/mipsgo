@@ -148,3 +148,35 @@ func (vm *VirtualMachine) BNE(instr Instruction) error {
 
 	return nil
 }
+
+func (vm *VirtualMachine) SW(instr Instruction) error {
+	err := ValidateInstruction(instr, I)
+	if err != nil {
+		return err
+	}
+
+	// SW operation in MIPS uses RT for the register to fetch its data from and
+	// RS for the address. We use RD and RS respectively for ease of parsing
+	address := vm.Registers[instr.RS]
+	value := vm.Registers[instr.RD]
+	offset := instr.Immediate
+
+	vm.Memory.SetWord(address+offset, WORD(value))
+
+	return nil
+}
+
+func (vm *VirtualMachine) LW(instr Instruction) error {
+	err := ValidateInstruction(instr, I)
+	if err != nil {
+		return err
+	}
+
+	// LW operation in MIPS uses RT for the register to load data into and RS
+	// for the address. We use RD and RS respectively for ease of parsing
+	address := vm.Registers[instr.RS]
+	offset := instr.Immediate
+	vm.Registers[instr.RD] = int32(vm.Memory.GetWord(address + offset))
+
+	return nil
+}

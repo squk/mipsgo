@@ -5,6 +5,8 @@ import "fmt"
 type VirtualMachine struct {
 	Registers    []int32
 	Instructions *([]Instruction)
+	Memory       VMem
+	PC           int32
 }
 
 var reg_map = map[string]int{
@@ -45,6 +47,7 @@ var reg_map = map[string]int{
 func InitVM() VirtualMachine {
 	var vm VirtualMachine
 	vm.Registers = make([]int32, 32)
+	vm.Memory = InitMemory()
 	vm.PC = 0
 	return vm
 }
@@ -80,6 +83,10 @@ func (vm *VirtualMachine) RunInstruction() {
 		err = vm.BEQ(instr)
 	case "bne":
 		err = vm.BNE(instr)
+	case "sw":
+		err = vm.SW(instr)
+	case "lw":
+		err = vm.LW(instr)
 	default:
 		break
 	}

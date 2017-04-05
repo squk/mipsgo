@@ -17,14 +17,14 @@ func InitMemory() VMem {
 }
 
 // REAL ADDRESS SPACE
-func (m *VMem) SetWord(pos int, val WORD) {
-	if pos > 0 && pos < int(VIRTUAL_MEMORY_SIZE) {
+func (m *VMem) SetWord(pos int32, val WORD) {
+	if pos > 0 && pos < VIRTUAL_MEMORY_SIZE {
 		m.Mem[pos] = val
 	}
 }
 
-func (m *VMem) GetWord(pos int) WORD {
-	if pos > 0 && pos < int(VIRTUAL_MEMORY_SIZE) {
+func (m *VMem) GetWord(pos int32) WORD {
+	if pos > 0 && pos < VIRTUAL_MEMORY_SIZE {
 		return m.Mem[pos]
 	} else {
 		return 0
