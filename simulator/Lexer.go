@@ -117,14 +117,17 @@ func (l *Lexer) LexSymbol(index int) int {
 
 		if isSymbol(c) {
 			collected += string(c)
+			break
 		} else {
-			if c == '\n' {
-				hasNL = true
-			}
 			break
 		}
 
 		newIndex = i
+	}
+
+	if l.Raw[newIndex+1] == '\n' {
+		newIndex++
+		hasNL = true
 	}
 
 	token := Token{SYMBOL, collected, 0, hasNL}
