@@ -15,7 +15,7 @@ var _ = Describe("Lexer", func() {
 
 	It("lexes numbers and identifiers", func() {
 		sim = NewSimulator("add $t0, $t1, $t2")
-		sim.Run()
+		sim.PreProcess()
 		Expect(sim.Lexer.Tokens[0].Category).To(Equal(KEYWORD)) // 'add'
 		Expect(sim.Lexer.Tokens[1].Category).To(Equal(SYMBOL))
 		Expect(sim.Lexer.Tokens[2].Category).To(Equal(TEXT)) // 't0'
@@ -25,7 +25,7 @@ var _ = Describe("Lexer", func() {
 
 	It("skips comments", func() {
 		sim = NewSimulator("# this is a test comment")
-		sim.Run()
+		sim.PreProcess()
 		Expect(len(sim.Lexer.Tokens)).To(Equal(0))
 	})
 })
