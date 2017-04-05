@@ -24,7 +24,9 @@ func ValidateInstruction(instr Instruction, format int) error {
 			return errors.New("Register passed as argument instead of immediate")
 		}
 	} else if format == J {
-		// TODO: validate Jump instruction format
+		if instr.Label == "" || instr.Immediate != 0 || instr.RD != -1 || instr.RS != -1 || instr.RT != -1 {
+			return errors.New("Jump instruction missing label or has extra parameter")
+		}
 	}
 
 	return nil
