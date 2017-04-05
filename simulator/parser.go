@@ -77,7 +77,7 @@ func (p *Parser) ParseOperation(index int) int {
 		} else if tk.Category == NUMBER {
 			instr.Immediate = int32(tk.Value)
 		} else if tk.Category == TEXT {
-			break
+			instr.Label = tk.ID
 		}
 
 		if tk.HasNL {
