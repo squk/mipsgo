@@ -49,10 +49,10 @@ func (s *Simulator) RunCode() {
 	instructions := &(s.Parser.Instructions)
 	s.VM.Instructions = instructions
 
-	sp := s.VM.Registers[GetRegNumber("sp")]
-	for sp != int32(len(*instructions)) {
+	pc := s.VM.PC
+	for pc != int32(len(*instructions)) {
 		s.VM.RunInstruction()
-		sp = s.VM.Registers[GetRegNumber("sp")]
+		pc = s.VM.PC
 
 	}
 }

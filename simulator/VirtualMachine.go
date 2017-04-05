@@ -45,15 +45,12 @@ var reg_map = map[string]int{
 func InitVM() VirtualMachine {
 	var vm VirtualMachine
 	vm.Registers = make([]int32, 32)
+	vm.PC = 0
 	return vm
 }
 
 func (vm *VirtualMachine) GetReg(s string) *int32 {
 	return &(vm.Registers[reg_map[s]])
-}
-
-func (vm *VirtualMachine) IncSP() {
-	vm.Registers[GetRegNumber("sp")]++
 }
 
 func GetRegNumber(s string) int {
@@ -62,7 +59,7 @@ func GetRegNumber(s string) int {
 
 func (vm *VirtualMachine) RunInstruction() {
 	var err error
-	instr := (*vm.Instructions)[vm.Registers[GetRegNumber("sp")]]
+	instr := (*vm.Instructions)[vm.PC]
 
 	switch operations[instr.OpCode] {
 	case "noop":
@@ -92,5 +89,5 @@ func (vm *VirtualMachine) RunInstruction() {
 		fmt.Println(err)
 	}
 
-	vm.IncSP()
+	vm.PC++
 }

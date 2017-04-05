@@ -111,7 +111,7 @@ func (vm *VirtualMachine) JUMP(instr Instruction, validate bool) error {
 	if instr.Label != "" {
 		for i, searchItem := range *(vm.Instructions) {
 			if searchItem.OpCode == 0 && searchItem.Label == instr.Label {
-				vm.Registers[GetRegNumber("sp")] = int32(i - 1)
+				vm.PC = int32(i - 1)
 			}
 		}
 	}

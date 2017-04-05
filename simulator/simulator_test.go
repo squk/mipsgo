@@ -118,4 +118,15 @@ var _ = Describe("Simulator", func() {
 		Expect(*sim.VM.GetReg("t1")).To(Equal(int32(-1)))
 		close(done)
 	}, 0.2)
+
+	It("LOAD and STORE memory", func(done Done) {
+		sim = NewSimulator(`
+		`)
+
+		go sim.Run()
+
+		time.Sleep(20 * time.Millisecond)
+		Expect(*sim.VM.GetReg("t1")).To(Equal(int32(-1)))
+		close(done)
+	}, 0.2)
 })
