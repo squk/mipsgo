@@ -20,6 +20,7 @@ func NewSimulator(src string) Simulator {
 	s.Lexer = NewLexer()
 	s.Lexer.Raw = s.Source
 	s.Parser = NewParser()
+	s.VM = InitVM()
 
 	return s
 }
