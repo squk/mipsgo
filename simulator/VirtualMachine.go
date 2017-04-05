@@ -1,7 +1,7 @@
 package simulator
 
 type VirtualMachine struct {
-	registers []int32
+	Registers []int32
 }
 
 var reg_map = map[string]int{
@@ -41,12 +41,16 @@ var reg_map = map[string]int{
 
 func InitVM() VirtualMachine {
 	var vm VirtualMachine
-	vm.registers = make([]int32, 32)
+	vm.Registers = make([]int32, 32)
 	return vm
 }
 
 func (vm *VirtualMachine) GetReg(s string) *int32 {
-	return &(vm.registers[reg_map[s]])
+	return &(vm.Registers[reg_map[s]])
+}
+
+func (vm *VirtualMachine) IncSP() {
+	vm.Registers[GetRegNumber("sp")]++
 }
 
 func GetRegNumber(s string) int {
