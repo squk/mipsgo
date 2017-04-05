@@ -48,3 +48,7 @@ func InitVM() VirtualMachine {
 func (vm *VirtualMachine) GetReg(s string) *int32 {
 	return &(vm.registers[reg_map[s]])
 }
+
+func GetRegNumber(s string) int {
+	return reg_map[s]
+}
