@@ -96,7 +96,8 @@ func (l *Lexer) SkipComment(index int) int {
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
 		if c == '\n' {
-			l.Tokens[len(l.Tokens)].HasNL = true
+			// marks HasNL flag on token preceding the comment
+			l.Tokens[i].HasNL = true
 			break
 		}
 		newIndex = i
