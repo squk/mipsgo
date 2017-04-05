@@ -25,4 +25,14 @@ var _ = Describe("Parser", func() {
 			OpCode: 30, RD: 9, RS: 9, RT: -1, Immediate: 4,
 		}))
 	})
+
+	It("parses labels", func() {
+		sim = NewSimulator(`main:
+								add $t0, $0, $0
+							sublabel:
+								add $t0, $0, $0`)
+		sim.PreProcess()
+		Expect(sim.Parser.Instructions[0].Label).To(Equal("main"))
+		Expect(sim.Parser.Instructions[2].Label).To(Equal("sublabel"))
+	})
 })
