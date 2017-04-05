@@ -35,11 +35,17 @@ func ReadSource(filename string) Simulator {
 	return s
 }
 
-func (s *Simulator) Run() {
+func (s *Simulator) PreProcess() {
 	s.Lexer.Lex()
-	s.Lexer.PrintTokens()
 	s.Parser.Parse(s.Lexer.Tokens)
-	s.Parser.PrintInstructions()
+	//s.Lexer.PrintTokens()
+	//s.Parser.PrintInstructions()
+}
+
+func (s *Simulator) Run() {
+	s.PreProcess()
+	s.RunCode()
+}
 }
 
 func (s *Simulator) GetSource() {
