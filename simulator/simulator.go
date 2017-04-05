@@ -68,18 +68,25 @@ func (s *Simulator) GetSource() {
 }
 
 func (s *Simulator) RunInstruction(instr Instruction) {
+	var err error
+
 	switch operations[instr.OpCode] {
 	case "add":
-		s.VM.ADD(instr)
+		err = s.VM.ADD(instr)
 	case "addi":
-		s.VM.ADDI(instr)
+		err = s.VM.ADDI(instr)
 	case "sub":
-		s.VM.SUB(instr)
+		err = s.VM.SUB(instr)
 	case "slt":
-		s.VM.SLT(instr)
+		err = s.VM.SLT(instr)
 	case "slti":
-		s.VM.SLTI(instr)
+		err = s.VM.SLTI(instr)
 	default:
 		fmt.Println("no op found")
+	}
+
+	// TODO: handle errors more gracefully than a printout
+	if err != nil {
+		fmt.Println(err)
 	}
 }
