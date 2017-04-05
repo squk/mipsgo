@@ -47,11 +47,11 @@ func (s *Simulator) Run() {
 
 func (s *Simulator) RunCode() {
 	instructions := &(s.Parser.Instructions)
-	sp := s.VM.Registers[GetRegNumber("sp")]
+	s.VM.Instructions = instructions
 
+	sp := s.VM.Registers[GetRegNumber("sp")]
 	for sp != int32(len(*instructions)) {
-		s.RunInstruction((*instructions)[sp])
-		s.VM.IncSP()
+		s.VM.RunInstruction()
 		sp = s.VM.Registers[GetRegNumber("sp")]
 
 	}
@@ -65,30 +65,4 @@ func (s *Simulator) GetSource() {
 	}
 
 	s.Source = b
-}
-
-func (s *Simulator) RunInstruction(instr Instruction) {
-	var err error
-
-	switch operations[instr.OpCode] {
-	case "noop":
-		break
-	case "add":
-		err = s.VM.ADD(instr)
-	case "addi":
-		err = s.VM.ADDI(instr)
-	case "sub":
-		err = s.VM.SUB(instr)
-	case "slt":
-		err = s.VM.SLT(instr)
-	case "slti":
-		err = s.VM.SLTI(instr)
-	default:
-		fmt.Println("no op found")
-	}
-
-	// TODO: handle errors more gracefully than a printout
-	if err != nil {
-		fmt.Println(err)
-	}
 }

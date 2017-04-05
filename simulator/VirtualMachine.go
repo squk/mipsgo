@@ -1,7 +1,10 @@
 package simulator
 
+import "fmt"
+
 type VirtualMachine struct {
-	Registers []int32
+	Registers    []int32
+	Instructions *([]Instruction)
 }
 
 var reg_map = map[string]int{
@@ -55,4 +58,39 @@ func (vm *VirtualMachine) IncSP() {
 
 func GetRegNumber(s string) int {
 	return reg_map[s]
+}
+
+func (vm *VirtualMachine) RunInstruction() {
+	var err error
+	instr := (*vm.Instructions)[vm.Registers[GetRegNumber("sp")]]
+
+	switch operations[instr.OpCode] {
+	case "noop":
+		break
+	case "add":
+		err = vm.ADD(instr)
+	case "addi":
+		err = vm.ADDI(instr)
+	case "sub":
+		err = vm.SUB(instr)
+	case "slt":
+		err = vm.SLT(instr)
+	case "slti":
+		err = vm.SLTI(instr)
+	case "j":
+		err = vm.JUMP(instr, true)
+	case "beq":
+		err = vm.BEQ(instr)
+	case "bne":
+		err = vm.BNE(instr)
+	default:
+		break
+	}
+
+	// TODO: handle errors more gracefully than a printout
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	vm.IncSP()
 }
