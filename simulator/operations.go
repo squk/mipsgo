@@ -47,6 +47,7 @@ func (vm *VirtualMachine) ADDI(instr Instruction) error {
 	}
 
 	vm.Registers[instr.RD] = vm.Registers[instr.RS] + instr.Immediate
+
 	return nil
 }
 
@@ -94,5 +95,54 @@ func (vm *VirtualMachine) SLTI(instr Instruction) error {
 	}
 
 	vm.Registers[instr.RD] = result
+	return nil
+}
+
+func (vm *VirtualMachine) JUMP(instr Instruction, validate bool) error {
+	if validate == true {
+		err := ValidateInstruction(instr, J)
+		if err != nil {
+			return err
+		}
+	}
+
+	if instr.Label != "" {
+		for i, searchItem := range *(vm.Instructions) {
+			if searchItem.OpCode == 0 && searchItem.Label == instr.Label {
+				vm.Registers[GetRegNumber("sp")] = int32(i - 1)
+			}
+		}
+	}
+
+	return nil
+}
+
+func (vm *VirtualMachine) BEQ(instr Instruction) error {
+	err := ValidateInstruction(instr, I)
+	if err != nil {
+		return err
+	}
+
+	if instr.Label != "" {
+		if vm.Registers[instr.RD] == vm.Registers[instr.RS] {
+			vm.JUMP(instr, false)
+		}
+	}
+
+	return nil
+}
+
+func (vm *VirtualMachine) BNE(instr Instruction) error {
+	err := ValidateInstruction(instr, I)
+	if err != nil {
+		return err
+	}
+
+	if instr.Label != "" {
+		if vm.Registers[instr.RD] != vm.Registers[instr.RS] {
+			vm.JUMP(instr, false)
+		}
+	}
+
 	return nil
 }
