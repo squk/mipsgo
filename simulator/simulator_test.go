@@ -119,7 +119,7 @@ var _ = Describe("Simulator", func() {
 		close(done)
 	}, 0.2)
 
-	It("LOAD and STORE memory", func(done Done) {
+	It("LOAD and STORE memory", func() {
 		sim = NewSimulator(`
 		addi $t0, $0, 2
 		addi $t1, $0, 127
@@ -137,6 +137,5 @@ var _ = Describe("Simulator", func() {
 		time.Sleep(20 * time.Millisecond)
 		Expect(*sim.VM.GetReg("s0")).To(Equal(int32(127)))
 		Expect(*sim.VM.GetReg("s1")).To(Equal(int32(254)))
-		close(done)
-	}, 0.2)
+	})
 })
