@@ -18,7 +18,11 @@ func (p *Parser) Parse(tokens []Token) {
 
 	for i := 0; i < len(p.Tokens); {
 		if p.Tokens[i].Category == KEYWORD {
-			i = p.ParseOperation(i)
+			if p.Tokens[i].ID == "break" {
+				// TODO: Implement a breakpoint pseudo-instruction
+			} else {
+				i = p.ParseOperation(i)
+			}
 		}
 	}
 }
