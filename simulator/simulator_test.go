@@ -17,4 +17,12 @@ var _ = Describe("Simulator", func() {
 		Expect(*(sim.VM.GetReg("t0"))).To(Equal(int32(5)))
 		Expect(*(sim.VM.GetReg("t1"))).To(Equal(int32(15)))
 	})
+
+	It("performs subtraction", func() {
+		sim = NewSimulator(`add $t0, $0, 15
+							sub $t1, $t0, 10`)
+		sim.Run()
+		Expect(*(sim.VM.GetReg("t0"))).To(Equal(int32(15)))
+		Expect(*(sim.VM.GetReg("t1"))).To(Equal(int32(5)))
+	})
 })
