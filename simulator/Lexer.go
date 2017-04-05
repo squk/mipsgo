@@ -12,8 +12,10 @@ const (
 	NUMBER
 	SYMBOL
 	KEYWORD
+	REGISTER
 )
 
+// only used for debuggging
 var Categories = map[int]string{
 	0: "WS",
 	1: "TXT",
@@ -81,7 +83,7 @@ func isNumber(c byte) bool {
 
 func isKeyword(s string) bool {
 	for _, k := range Keywords {
-		if k == s {
+		if k == strings.ToLower(s) {
 			return true
 		}
 	}
@@ -106,6 +108,7 @@ func (l *Lexer) SkipComment(index int) int {
 func (l *Lexer) LexSymbol(index int) int {
 	var collected string
 	newIndex := index
+	hasNL := false
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
@@ -113,13 +116,16 @@ func (l *Lexer) LexSymbol(index int) int {
 		if isSymbol(c) {
 			collected += string(c)
 		} else {
+			if c == '\n' {
+				hasNL = true
+			}
 			break
 		}
 
 		newIndex = i
 	}
 
-	token := Token{SYMBOL, collected}
+	token := Token{SYMBOL, collected, 0, hasNL}
 	l.Tokens = append(l.Tokens, token)
 
 	return newIndex + 1
@@ -147,6 +153,7 @@ func (l *Lexer) LexWS(index int) int {
 func (l *Lexer) LexNumber(index int) int {
 	var collected string
 	newIndex := index
+	hasNL := false
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
@@ -169,6 +176,9 @@ func (l *Lexer) LexNumber(index int) int {
 			}
 		} else if (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') {
 			collected += string(l.Raw[i])
+		} else if c == '\n' {
+			hasNL = true
+			break
 		} else {
 			break
 		}
@@ -176,7 +186,12 @@ func (l *Lexer) LexNumber(index int) int {
 		newIndex = i
 	}
 
-	token := Token{NUMBER, collected}
+	val, err := strconv.Atoi(collected)
+	if err != nil {
+		val = 0
+	}
+
+	token := Token{NUMBER, collected, val, hasNL}
 	l.Tokens = append(l.Tokens, token)
 	return newIndex + 1
 }
@@ -184,12 +199,16 @@ func (l *Lexer) LexNumber(index int) int {
 func (l *Lexer) LexWord(index int) int {
 	var collected string
 	newIndex := index
+	hasNL := false
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
 
 		if !isSymbol(c) && !isWS(c) {
 			collected += string(c)
+		} else if c == '\n' {
+			hasNL = true
+			break
 		} else {
 			break
 		}
@@ -202,7 +221,7 @@ func (l *Lexer) LexWord(index int) int {
 		category = KEYWORD
 	}
 
-	token := Token{category, collected}
+	token := Token{category, collected, 0, hasNL}
 	l.Tokens = append(l.Tokens, token)
 
 	return newIndex + 1
@@ -211,6 +230,7 @@ func (l *Lexer) LexWord(index int) int {
 func (l *Lexer) PrintTokens() {
 	fmt.Println("Tokens: ")
 	for _, tk := range l.Tokens {
-		fmt.Println("\t", Categories[tk.Category], " ", tk.ID)
+		//fmt.Println("\t", Categories[tk.Category], "\t\"", tk.ID, "\"\t NL?", tk.HasNL)
+		fmt.Println("\t", Categories[tk.Category], "\t", tk.ID)
 	}
 }
