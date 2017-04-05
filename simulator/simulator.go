@@ -46,6 +46,17 @@ func (s *Simulator) Run() {
 	s.PreProcess()
 	s.RunCode()
 }
+
+func (s *Simulator) RunCode() {
+	instructions := &(s.Parser.Instructions)
+	sp := s.VM.Registers[GetRegNumber("sp")]
+
+	for sp != int32(len(*instructions)) {
+		s.RunInstruction((*instructions)[sp])
+		s.VM.IncSP()
+		sp = s.VM.Registers[GetRegNumber("sp")]
+
+	}
 }
 
 func (s *Simulator) GetSource() {
@@ -56,4 +67,17 @@ func (s *Simulator) GetSource() {
 	}
 
 	s.Source = b
+}
+
+func (s *Simulator) RunInstruction(instr Instruction) {
+	fmt.Println("Running ", instr)
+
+	switch operations[instr.OpCode] {
+	case "add":
+		s.VM.ADD(instr)
+	case "sub":
+		s.VM.SUB(instr)
+	default:
+		fmt.Println("no op found")
+	}
 }
