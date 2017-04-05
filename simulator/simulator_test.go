@@ -49,4 +49,14 @@ var _ = Describe("Simulator", func() {
 		Expect(*(sim.VM.GetReg("t2"))).To(Equal(int32(1)))
 		Expect(*(sim.VM.GetReg("t3"))).To(Equal(int32(0)))
 	})
+
+	It("performs SLTI OP", func() {
+		sim = NewSimulator(`addi $t0, $0, 5
+							slti $t1, $t0, 9
+							slti $t2, $t0, 4`)
+		sim.Run()
+		Expect(*(sim.VM.GetReg("t0"))).To(Equal(int32(5)))
+		Expect(*(sim.VM.GetReg("t1"))).To(Equal(int32(1)))
+		Expect(*(sim.VM.GetReg("t2"))).To(Equal(int32(0)))
+	})
 })
