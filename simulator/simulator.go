@@ -75,10 +75,14 @@ func (s *Simulator) RunInstruction(instr Instruction) {
 	switch operations[instr.OpCode] {
 	case "add":
 		s.VM.ADD(instr)
+	case "addi":
+		s.VM.ADDI(instr)
 	case "sub":
 		s.VM.SUB(instr)
 	case "slt":
 		s.VM.SLT(instr)
+	case "slti":
+		s.VM.SLTI(instr)
 	default:
 		fmt.Println("no op found")
 	}
