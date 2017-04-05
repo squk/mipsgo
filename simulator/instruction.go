@@ -31,7 +31,7 @@ type Instruction struct {
 	RT        int
 	Shift     int
 	Funct     int
-	Immediate int
+	Immediate int32
 	Address   int
 }
 

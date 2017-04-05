@@ -45,7 +45,7 @@ func (p *Parser) ParseOperation(index int) int {
 				i++
 				tk = p.Tokens[i]
 
-				if tk.Category == TEXT {
+				if tk.Category == TEXT || (tk.Category == NUMBER && tk.ID == "0") {
 					instr.AddArgument(tk.ID)
 				}
 
@@ -53,7 +53,7 @@ func (p *Parser) ParseOperation(index int) int {
 				continue
 			}
 		} else if tk.Category == NUMBER {
-			instr.Immediate = tk.Value
+			instr.Immediate = int32(tk.Value)
 		} else if tk.Category == TEXT {
 			break
 		}
@@ -65,7 +65,6 @@ func (p *Parser) ParseOperation(index int) int {
 	}
 
 	p.Instructions = append(p.Instructions, instr)
-	fmt.Println("ended: ", p.Tokens[i-1])
 	return i
 }
 
