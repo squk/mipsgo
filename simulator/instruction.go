@@ -26,6 +26,7 @@ func GetOpCode(str string) int {
 // .globl will have to be KWs as well
 type Instruction struct {
 	OpCode    int
+	Label     string
 	RD        int
 	RS        int
 	RT        int

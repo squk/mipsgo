@@ -71,6 +71,8 @@ func (s *Simulator) RunInstruction(instr Instruction) {
 	var err error
 
 	switch operations[instr.OpCode] {
+	case "noop":
+		break
 	case "add":
 		err = s.VM.ADD(instr)
 	case "addi":

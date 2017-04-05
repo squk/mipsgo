@@ -17,14 +17,32 @@ func (p *Parser) Parse(tokens []Token) {
 	p.Tokens = tokens
 
 	for i := 0; i < len(p.Tokens); {
-		if p.Tokens[i].Category == KEYWORD {
-			if p.Tokens[i].ID == "break" {
+		tk := p.Tokens[i]
+		if tk.Category == KEYWORD {
+			if tk.ID == "break" {
 				// TODO: Implement a breakpoint pseudo-instruction
 			} else {
 				i = p.ParseOperation(i)
 			}
+		} else if tk.Category == TEXT {
+			i = p.ParseLabel(i)
 		}
 	}
+}
+
+// because of how the stack pointer in MIPS works, we want to store our labels
+// as noop instructions
+func (p *Parser) ParseLabel(index int) int {
+	newIndex := index + 1
+
+	if p.Tokens[newIndex].ID == ":" {
+		labelInstruction := NewInstruction()
+		labelInstruction.Label = p.Tokens[index].ID
+		p.Instructions = append(p.Instructions, labelInstruction)
+		newIndex++
+	}
+
+	return newIndex
 }
 
 func (p *Parser) ParseOperation(index int) int {
