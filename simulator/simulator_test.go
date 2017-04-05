@@ -121,12 +121,22 @@ var _ = Describe("Simulator", func() {
 
 	It("LOAD and STORE memory", func(done Done) {
 		sim = NewSimulator(`
+		addi $t0, $0, 2
+		addi $t1, $0, 127
+		sw $t1, 0($t0) # store 127 at mem address 2
+
+		addi $t2, $t1, 127
+		sw $t2, -1($t0) # store 254 at mem address 2 offset by -1
+
+		lw $s0, 0($t0)
+		lw $s1, -1($t0)
 		`)
 
 		go sim.Run()
 
 		time.Sleep(20 * time.Millisecond)
-		Expect(*sim.VM.GetReg("t1")).To(Equal(int32(-1)))
+		Expect(*sim.VM.GetReg("s0")).To(Equal(int32(127)))
+		Expect(*sim.VM.GetReg("s1")).To(Equal(int32(254)))
 		close(done)
 	}, 0.2)
 })
