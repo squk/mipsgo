@@ -70,8 +70,6 @@ func (s *Simulator) GetSource() {
 }
 
 func (s *Simulator) RunInstruction(instr Instruction) {
-	fmt.Println("Running ", instr)
-
 	switch operations[instr.OpCode] {
 	case "add":
 		s.VM.ADD(instr)
