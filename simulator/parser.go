@@ -93,9 +93,9 @@ func (p *Parser) ParseOperation(index int) int {
 func (p *Parser) PrintInstructions() {
 	fmt.Println("Instructions: ")
 
-	fmt.Println("\tOP  RD  RS  RT  IMM")
+	fmt.Println("\tOP\tRD\tRS\tRT\tIMM\tLBL")
 
 	for _, instr := range p.Instructions {
-		fmt.Println("\t", instr.OpCode, " ", instr.RD, " ", instr.RS, " ", instr.RT, " ", instr.Immediate)
+		fmt.Println("\t", instr.OpCode, "\t", instr.RD, "\t", instr.RS, "\t", instr.RT, "\t", instr.Immediate, "\t", instr.Label)
 	}
 }
