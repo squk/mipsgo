@@ -1,1 +1,3 @@
 *.vim
+ace/
+r.config.yaml
