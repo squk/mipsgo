@@ -70,6 +70,20 @@ func (vm *VirtualMachine) SUB(instr Instruction) error {
 	return nil
 }
 
+func (vm *VirtualMachine) SLL(instr Instruction) error {
+	/*err := ValidateInstruction(instr, R)
+	if err != nil {
+		return err
+	}
+	*/
+
+	shamt := instr.Immediate
+	var result int32 = vm.Registers[instr.RS] << uint32(shamt)
+
+	vm.Registers[instr.RD] = result
+	return nil
+}
+
 func (vm *VirtualMachine) SLT(instr Instruction) error {
 	err := ValidateInstruction(instr, R)
 	if err != nil {

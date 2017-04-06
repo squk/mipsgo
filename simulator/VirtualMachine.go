@@ -73,6 +73,8 @@ func (vm *VirtualMachine) RunInstruction() {
 		err = vm.ADDI(instr)
 	case "sub":
 		err = vm.SUB(instr)
+	case "sll":
+		err = vm.SLL(instr)
 	case "slt":
 		err = vm.SLT(instr)
 	case "slti":
