@@ -11,6 +11,8 @@ type Simulator struct {
 	Lexer    Lexer
 	Parser   Parser
 	VM       VirtualMachine
+	Paused   bool
+	Running  bool
 }
 
 func NewSimulator(src string) Simulator {
@@ -43,8 +45,20 @@ func (s *Simulator) PreProcess() {
 }
 
 func (s *Simulator) Run() {
+	s.Running = true
 	s.PreProcess()
 	s.RunCode()
+}
+
+func (s *Simulator) Step() {
+	s.Paused = true
+	if !s.Running {
+		s.PreProcess()
+	}
+
+	if s.VM.PC <= int32(len(*s.VM.Instructions)) {
+		s.VM.RunInstruction()
+	}
 }
 
 func (s *Simulator) RunCode() {
@@ -52,7 +66,7 @@ func (s *Simulator) RunCode() {
 	s.VM.Instructions = instructions
 
 	pc := s.VM.PC
-	for pc != int32(len(*instructions)) {
+	for pc != int32(len(*instructions)) && s.Paused {
 		s.VM.RunInstruction()
 		pc = s.VM.PC
 
