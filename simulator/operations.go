@@ -27,11 +27,11 @@ func ValidateInstruction(instr Instruction, format int) error {
 
 		if instr.RT != -1 {
 
-			return errors.New("Line " + string(instr.LineNumber) + ": Register passed as argument instead of immediate")
+			return errors.New(message + "Register passed as argument instead of immediate")
 		}
 	} else if format == J {
 		if instr.Label == "" || instr.Immediate != 0 || instr.RD != -1 || instr.RS != -1 || instr.RT != -1 {
-			return errors.New("Line " + string(instr.LineNumber) + ": Jump instruction missing label or has extra parameter")
+			return errors.New(message + "Jump instruction missing label or has extra parameter")
 		}
 	}
 
@@ -72,6 +72,10 @@ func (vm *VirtualMachine) SUB(instr Instruction) error {
 }
 
 func (vm *VirtualMachine) SLL(instr Instruction) error {
+	if instr.RD == -1 {
+		return errors.New("Line " + string(instr.LineNumber) + ": Missing register")
+	}
+
 	shamt := instr.Immediate
 	var result int32 = vm.Registers[instr.RS] << uint32(shamt)
 
