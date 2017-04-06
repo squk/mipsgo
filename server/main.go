@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"net/http"
 	"os"
 
+	. "github.com/ctnieves/mipsgo/simulator"
 	"github.com/gorilla/websocket"
 	uuid "github.com/satori/go.uuid"
 )
@@ -31,9 +31,11 @@ type ClientManager struct {
 }
 
 type Client struct {
-	id     string
-	socket *websocket.Conn
-	send   chan []byte
+	id            string
+	socket        *websocket.Conn
+	send          chan []byte
+	simulator     Simulator
+	currentSource string
 }
 
 type Request struct {
@@ -53,6 +55,7 @@ func (manager *ClientManager) start() {
 	for {
 		select {
 		case conn := <-manager.register:
+			conn.simulator = EmptySimulator()
 			manager.clients[conn] = true
 		case conn := <-manager.unregister:
 			if _, ok := manager.clients[conn]; ok {
@@ -89,6 +92,7 @@ func (c *Client) read() {
 
 	for {
 		_, message, err := c.socket.ReadMessage()
+
 		// client most likely disconnected
 		if err != nil {
 			manager.unregister <- c
@@ -97,7 +101,17 @@ func (c *Client) read() {
 		}
 		req := Request{Sender: c.id}
 		err = json.Unmarshal(message, &req)
-		fmt.Println(req)
+
+		if c.currentSource != req.Source {
+			c.currentSource = req.Source
+			c.simulator.SetSource(req.Source)
+		}
+
+		if req.Command == "run" {
+			c.simulator.Init()
+			c.simulator.SetSource(req.Source)
+			c.simulator.Run()
+		}
 	}
 }
 
