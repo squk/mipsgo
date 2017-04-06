@@ -49,7 +49,13 @@ func (l *Lexer) Lex() []Token {
 	for i := 0; i < len(l.Raw); {
 		c := l.Raw[i]
 
-		if isSymbol(c) {
+		if c == '\n' {
+			l.LineCounter++
+			if len(l.Tokens) > 0 {
+				l.Tokens[len(l.Tokens)-1].HasNL = true
+			}
+			i++
+		} else if isSymbol(c) {
 			i = l.LexSymbol(i)
 		} else if isWS(c) {
 			i = l.LexWS(i)
@@ -60,6 +66,7 @@ func (l *Lexer) Lex() []Token {
 		} else {
 			i = l.LexWord(i)
 		}
+
 	}
 
 	return l.Tokens
@@ -114,7 +121,6 @@ func (l *Lexer) SkipComment(index int) int {
 func (l *Lexer) LexSymbol(index int) int {
 	var collected string
 	newIndex := index
-	hasNL := false
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
@@ -129,13 +135,7 @@ func (l *Lexer) LexSymbol(index int) int {
 		newIndex = i
 	}
 
-	if l.Raw[newIndex+1] == '\n' {
-		defer func() { l.LineCounter++ }()
-		newIndex++
-		hasNL = true
-	}
-
-	token := Token{SYMBOL, collected, 0, hasNL, l.LineCounter}
+	token := Token{SYMBOL, collected, 0, false, l.LineCounter}
 	l.Tokens = append(l.Tokens, token)
 
 	return newIndex + 1
@@ -163,7 +163,6 @@ func (l *Lexer) LexWS(index int) int {
 func (l *Lexer) LexNumber(index int) int {
 	var collected string
 	newIndex := index
-	hasNL := false
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
@@ -186,10 +185,6 @@ func (l *Lexer) LexNumber(index int) int {
 			}
 		} else if (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') {
 			collected += string(l.Raw[i])
-		} else if c == '\n' {
-			defer func() { l.LineCounter++ }()
-			hasNL = true
-			break
 		} else {
 			break
 		}
@@ -202,7 +197,7 @@ func (l *Lexer) LexNumber(index int) int {
 		val = 0
 	}
 
-	token := Token{NUMBER, collected, val, hasNL, l.LineCounter}
+	token := Token{NUMBER, collected, val, false, l.LineCounter}
 	l.Tokens = append(l.Tokens, token)
 	return newIndex + 1
 }
@@ -210,17 +205,12 @@ func (l *Lexer) LexNumber(index int) int {
 func (l *Lexer) LexWord(index int) int {
 	var collected string
 	newIndex := index
-	hasNL := false
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
 
 		if !isSymbol(c) && !isWS(c) {
 			collected += string(c)
-		} else if c == '\n' {
-			defer func() { l.LineCounter++ }()
-			hasNL = true
-			break
 		} else {
 			break
 		}
@@ -233,7 +223,7 @@ func (l *Lexer) LexWord(index int) int {
 		category = KEYWORD
 	}
 
-	token := Token{category, collected, 0, hasNL, l.LineCounter}
+	token := Token{category, collected, 0, false, l.LineCounter}
 	l.Tokens = append(l.Tokens, token)
 
 	return newIndex + 1

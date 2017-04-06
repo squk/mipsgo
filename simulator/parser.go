@@ -14,6 +14,7 @@ func NewParser() Parser {
 }
 
 func (p *Parser) Parse(tokens []Token) {
+	fmt.Println("parsing...")
 	p.Tokens = tokens
 
 	for i := 0; i < len(p.Tokens); {
