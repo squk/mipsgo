@@ -25,20 +25,23 @@ var Categories = map[int]string{
 }
 
 type Token struct {
-	Category int
-	ID       string
-	Value    int
-	HasNL    bool
+	Category   int
+	ID         string
+	Value      int
+	HasNL      bool
+	LineNumber int
 }
 
 type Lexer struct {
-	Raw    []byte
-	Tokens []Token
+	Raw         []byte
+	Tokens      []Token
+	LineCounter int
 }
 
 func NewLexer() Lexer {
 	return Lexer{
-		Tokens: make([]Token, 0),
+		Tokens:      make([]Token, 0),
+		LineCounter: 1,
 	}
 }
 
@@ -99,6 +102,7 @@ func (l *Lexer) SkipComment(index int) int {
 		if c == '\n' {
 			// marks HasNL flag on token preceding the comment
 			l.Tokens[len(l.Tokens)-1].HasNL = true
+			l.LineCounter++
 			break
 		}
 		newIndex = i
@@ -126,11 +130,12 @@ func (l *Lexer) LexSymbol(index int) int {
 	}
 
 	if l.Raw[newIndex+1] == '\n' {
+		defer func() { l.LineCounter++ }()
 		newIndex++
 		hasNL = true
 	}
 
-	token := Token{SYMBOL, collected, 0, hasNL}
+	token := Token{SYMBOL, collected, 0, hasNL, l.LineCounter}
 	l.Tokens = append(l.Tokens, token)
 
 	return newIndex + 1
@@ -182,6 +187,7 @@ func (l *Lexer) LexNumber(index int) int {
 		} else if (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') {
 			collected += string(l.Raw[i])
 		} else if c == '\n' {
+			defer func() { l.LineCounter++ }()
 			hasNL = true
 			break
 		} else {
@@ -196,7 +202,7 @@ func (l *Lexer) LexNumber(index int) int {
 		val = 0
 	}
 
-	token := Token{NUMBER, collected, val, hasNL}
+	token := Token{NUMBER, collected, val, hasNL, l.LineCounter}
 	l.Tokens = append(l.Tokens, token)
 	return newIndex + 1
 }
@@ -212,6 +218,7 @@ func (l *Lexer) LexWord(index int) int {
 		if !isSymbol(c) && !isWS(c) {
 			collected += string(c)
 		} else if c == '\n' {
+			defer func() { l.LineCounter++ }()
 			hasNL = true
 			break
 		} else {
@@ -226,7 +233,7 @@ func (l *Lexer) LexWord(index int) int {
 		category = KEYWORD
 	}
 
-	token := Token{category, collected, 0, hasNL}
+	token := Token{category, collected, 0, hasNL, l.LineCounter}
 	l.Tokens = append(l.Tokens, token)
 
 	return newIndex + 1

@@ -25,15 +25,16 @@ func GetOpCode(str string) int {
 // all keywords are operations FOR NOW: .data, .text, and
 // .globl will have to be KWs as well
 type Instruction struct {
-	OpCode    int
-	Label     string
-	RD        int
-	RS        int
-	RT        int
-	Shift     int
-	Funct     int
-	Immediate int32
-	Address   int
+	OpCode     int
+	Label      string
+	RD         int
+	RS         int
+	RT         int
+	Shift      int
+	Funct      int
+	Immediate  int32
+	Address    int
+	LineNumber int
 }
 
 func NewInstruction() Instruction {

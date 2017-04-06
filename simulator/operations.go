@@ -1,6 +1,9 @@
 package simulator
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 // instruction formats for MIPS
 const (
@@ -10,9 +13,10 @@ const (
 )
 
 func ValidateInstruction(instr Instruction, format int) error {
+	message := ("Line " + strconv.Itoa(instr.LineNumber) + ": ")
 	if format == R {
 		if instr.Immediate != 0 || instr.RD == -1 || instr.RS == -1 || instr.RT == -1 {
-			return errors.New("Immediate passed instead of RT or RT is missing")
+			return errors.New(message + "Immediate passed instead of RT or RT is missing")
 		}
 	} else if format == I {
 		/* according to the MIPS specification, RS and RT are the names of the
@@ -21,11 +25,12 @@ func ValidateInstruction(instr Instruction, format int) error {
 		 * label for the argument we're passing */
 
 		if instr.RT != -1 {
-			return errors.New("Register passed as argument instead of immediate")
+
+			return errors.New("Line " + string(instr.LineNumber) + ": Register passed as argument instead of immediate")
 		}
 	} else if format == J {
 		if instr.Label == "" || instr.Immediate != 0 || instr.RD != -1 || instr.RS != -1 || instr.RT != -1 {
-			return errors.New("Jump instruction missing label or has extra parameter")
+			return errors.New("Line " + string(instr.LineNumber) + ": Jump instruction missing label or has extra parameter")
 		}
 	}
 

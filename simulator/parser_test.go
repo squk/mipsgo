@@ -16,13 +16,13 @@ var _ = Describe("Parser", func() {
 							sll $t1, $t1, 4`)
 		sim.PreProcess()
 		Expect(sim.Parser.Instructions[0]).To(Equal(Instruction{
-			OpCode: 39, RD: 16, RS: 17, RT: 18,
+			OpCode: 39, RD: 16, RS: 17, RT: 18, LineNumber: 1,
 		}))
 		Expect(sim.Parser.Instructions[1]).To(Equal(Instruction{
-			OpCode: 1, RD: 8, RS: 9, RT: 10,
+			OpCode: 1, RD: 8, RS: 9, RT: 10, LineNumber: 2,
 		}))
 		Expect(sim.Parser.Instructions[2]).To(Equal(Instruction{
-			OpCode: 30, RD: 9, RS: 9, RT: -1, Immediate: 4,
+			OpCode: 30, RD: 9, RS: 9, RT: -1, LineNumber: 3, Immediate: 4,
 		}))
 	})
 

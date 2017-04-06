@@ -38,6 +38,7 @@ func (p *Parser) ParseLabel(index int) int {
 	if p.Tokens[newIndex].ID == ":" {
 		labelInstruction := NewInstruction()
 		labelInstruction.Label = p.Tokens[index].ID
+		labelInstruction.LineNumber = p.Tokens[index].LineNumber
 		p.Instructions = append(p.Instructions, labelInstruction)
 		newIndex++
 	}
@@ -51,6 +52,7 @@ func (p *Parser) ParseOperation(index int) int {
 	newIndex := index + 1
 
 	instr.OpCode = GetOpCode(p.Tokens[index].ID)
+	instr.LineNumber = p.Tokens[index].LineNumber
 
 	// no matching opcode found	OR noop
 	if instr.OpCode == 0 {
