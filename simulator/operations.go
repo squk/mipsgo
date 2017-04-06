@@ -59,12 +59,7 @@ func (vm *VirtualMachine) SUB(instr Instruction) error {
 		return err
 	}
 
-	var val int32 = 0
-	if instr.RT == -1 {
-		val = instr.Immediate
-	} else {
-		val = vm.Registers[instr.RT]
-	}
+	val := vm.Registers[instr.RT]
 
 	vm.Registers[instr.RD] = vm.Registers[instr.RS] - val
 	return nil
