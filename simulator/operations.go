@@ -2,6 +2,7 @@ package simulator
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -186,5 +187,26 @@ func (vm *VirtualMachine) LW(instr Instruction) error {
 	offset := instr.Immediate
 	vm.Registers[instr.RD] = int32(vm.Memory.GetWord(address + offset))
 
+	return nil
+}
+
+// MIPSGO SPECIFIC PSUEDO INSTRUCTIONS
+func (vm *VirtualMachine) PBIN(instr Instruction) error {
+	value := vm.Registers[instr.RD]
+	//fmt.Println(strconv.FormatInt(int64(value), 2))
+	//fmt.Println(strconv.FormatUint(uint64(value), 2))
+	fmt.Printf("%b\n", uint32(value))
+	return nil
+}
+
+func (vm *VirtualMachine) PHEX(instr Instruction) error {
+	value := vm.Registers[instr.RD]
+	fmt.Printf("0x%x\n", uint32(value))
+	return nil
+}
+
+func (vm *VirtualMachine) PDEC(instr Instruction) error {
+	value := vm.Registers[instr.RD]
+	fmt.Println(value)
 	return nil
 }

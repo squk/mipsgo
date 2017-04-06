@@ -89,6 +89,14 @@ func (vm *VirtualMachine) RunInstruction() {
 		err = vm.SW(instr)
 	case "lw":
 		err = vm.LW(instr)
+
+	// MIPSGO pseudo instructions
+	case "pbin":
+		err = vm.PBIN(instr)
+	case "phex":
+		err = vm.PHEX(instr)
+	case "pdec":
+		err = vm.PDEC(instr)
 	default:
 		break
 	}

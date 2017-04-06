@@ -38,6 +38,8 @@ func ReadSource(filename string) Simulator {
 func (s *Simulator) PreProcess() {
 	s.Lexer.Lex()
 	s.Parser.Parse(s.Lexer.Tokens)
+	s.Lexer.PrintTokens()
+	s.Parser.PrintInstructions()
 }
 
 func (s *Simulator) Run() {

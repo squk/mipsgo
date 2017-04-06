@@ -7,5 +7,5 @@ var Keywords = [...]string{
 	"lw", "mfhi", "mflo", "mult", "multu", "noop", "or",
 	"ori", "sb", "sll", "sllv", "slt", "slti", "sltiu",
 	"sltu", "sra", "srl", "srlv", "sub", "subu", "sw",
-	"syscall", "xor", "xori", "break",
+	"syscall", "xor", "xori", "break", "pbin", "phex", "pdec",
 }

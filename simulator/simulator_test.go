@@ -132,9 +132,8 @@ var _ = Describe("Simulator", func() {
 		lw $s1, -1($t0)
 		`)
 
-		go sim.Run()
+		sim.Run()
 
-		time.Sleep(20 * time.Millisecond)
 		Expect(*sim.VM.GetReg("s0")).To(Equal(int32(127)))
 		Expect(*sim.VM.GetReg("s1")).To(Equal(int32(254)))
 	})
@@ -154,9 +153,8 @@ var _ = Describe("Simulator", func() {
 			sll $t0, $t0, 30
 		`)
 
-		go sim.Run()
+		sim.Run()
 
-		time.Sleep(20 * time.Millisecond)
 		Expect(*sim.VM.GetReg("s0")).To(Equal(int32(-1610612736)))
 		Expect(*sim.VM.GetReg("t0")).To(Equal(int32(-2147483648)))
 	})
