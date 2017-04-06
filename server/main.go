@@ -102,16 +102,23 @@ func (c *Client) read() {
 		req := Request{Sender: c.id}
 		err = json.Unmarshal(message, &req)
 
-		if c.currentSource != req.Source {
-			c.currentSource = req.Source
-			c.simulator.SetSource(req.Source)
+		if req.Command == "run" || req.Command == "step" {
+			if c.currentSource != req.Source {
+				c.currentSource = req.Source
+				c.simulator.SetSource(req.Source)
+			}
+		} else if req.Command == "setMem" {
+
+			// TODO: allow setting of memory in hexadecimal
 		}
 
-		if req.Command == "run" {
-			c.simulator.Init()
-			c.simulator.SetSource(req.Source)
-			c.simulator.Run()
-		}
+		go func() {
+			if req.Command == "run" {
+				c.simulator.Init()
+				c.simulator.SetSource(req.Source)
+				c.simulator.Run()
+			}
+		}()
 	}
 }
 
