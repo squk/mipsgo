@@ -71,12 +71,6 @@ func (vm *VirtualMachine) SUB(instr Instruction) error {
 }
 
 func (vm *VirtualMachine) SLL(instr Instruction) error {
-	/*err := ValidateInstruction(instr, R)
-	if err != nil {
-		return err
-	}
-	*/
-
 	shamt := instr.Immediate
 	var result int32 = vm.Registers[instr.RS] << uint32(shamt)
 
