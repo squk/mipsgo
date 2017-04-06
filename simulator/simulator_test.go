@@ -138,4 +138,26 @@ var _ = Describe("Simulator", func() {
 		Expect(*sim.VM.GetReg("s0")).To(Equal(int32(127)))
 		Expect(*sim.VM.GetReg("s1")).To(Equal(int32(254)))
 	})
+
+	It("Shifts Left Logical", func() {
+		sim = NewSimulator(`
+			addi $s0, $zero, 10
+			sll $s0, $s0, 4
+			sll $s0, $s0, 4
+			sll $s0, $s0, 4
+			sll $s0, $s0, 4
+			sll $s0, $s0, 4
+			sll $s0, $s0, 4
+			sll $s0, $s0, 4
+
+			addi $t0, $zero, 10
+			sll $t0, $t0, 30
+		`)
+
+		go sim.Run()
+
+		time.Sleep(20 * time.Millisecond)
+		Expect(*sim.VM.GetReg("s0")).To(Equal(int32(-1610612736)))
+		Expect(*sim.VM.GetReg("t0")).To(Equal(int32(-2147483648)))
+	})
 })
