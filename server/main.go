@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -36,6 +37,7 @@ type Client struct {
 	send          chan []byte
 	simulator     Simulator
 	currentSource string
+	response      Response
 }
 
 type Request struct {
@@ -84,6 +86,11 @@ func (manager *ClientManager) send(message []byte, ignore *Client) {
 	}
 }
 
+type Response struct {
+	RegisterContents map[string]int32 `json:"registers"`
+	Output           string           `json:"output"`
+}
+
 func (c *Client) read() {
 	defer func() {
 		manager.unregister <- c
@@ -114,9 +121,24 @@ func (c *Client) read() {
 
 		go func() {
 			if req.Command == "run" {
-				c.simulator.Init()
+				defer c.simulator.Init()
 				c.simulator.SetSource(req.Source)
 				c.simulator.Run()
+				c.response.Output += c.simulator.Lexer.GetTokens() + "\n"
+				c.response.RegisterContents = c.simulator.VM.GetMappedRegisters()
+
+				for _, out := range c.simulator.VM.Outputs {
+					c.response.Output += out
+				}
+
+				resp, err := json.Marshal(c.response)
+				if err != nil {
+					fmt.Println("Error marshalling console output for browser")
+				} else {
+					c.socket.WriteMessage(websocket.TextMessage, resp)
+
+				}
+				c.response = Response{}
 			}
 		}()
 	}
@@ -129,12 +151,10 @@ func (c *Client) write() {
 
 	for {
 		select {
-		case message, ok := <-c.send:
+		case _, ok := <-c.send:
 			if !ok {
 				c.socket.WriteMessage(websocket.CloseMessage, []byte{})
 			}
-
-			c.socket.WriteMessage(websocket.TextMessage, message)
 		}
 	}
 }
@@ -153,6 +173,11 @@ func wsPage(res http.ResponseWriter, r *http.Request) {
 	go client.write()
 }
 
+func makeFileServer(dirName string) {
+	fs := http.FileServer(http.Dir(dirName))
+	http.Handle("/"+dirName+"/", http.StripPrefix("/"+dirName+"/", fs))
+}
+
 func main() {
 	port := os.Getenv("PORT")
 
@@ -161,8 +186,11 @@ func main() {
 	}
 
 	go manager.start()
-	fs := http.FileServer(http.Dir("ace"))
-	http.Handle("/ace/", http.StripPrefix("/ace/", fs))
+	makeFileServer("ace")
+	makeFileServer("css")
+	makeFileServer("js")
+	makeFileServer("fonts")
+
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/ws", wsPage)
 	http.ListenAndServe(":"+port, nil)
