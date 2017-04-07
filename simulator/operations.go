@@ -196,20 +196,24 @@ func (vm *VirtualMachine) LW(instr Instruction) error {
 // MIPSGO SPECIFIC PSUEDO INSTRUCTIONS
 func (vm *VirtualMachine) PBIN(instr Instruction) error {
 	value := vm.Registers[instr.RD]
-	//fmt.Println(strconv.FormatInt(int64(value), 2))
-	//fmt.Println(strconv.FormatUint(uint64(value), 2))
-	fmt.Printf("%b\n", uint32(value))
+	output := fmt.Sprintf("Line "+strconv.Itoa(instr.LineNumber)+": $"+GetRegName(instr.RD)+" = %032b\n", uint32(value))
+	vm.Print(output)
+
 	return nil
 }
 
 func (vm *VirtualMachine) PHEX(instr Instruction) error {
 	value := vm.Registers[instr.RD]
-	fmt.Printf("0x%x\n", uint32(value))
+	output := fmt.Sprintf("Line "+strconv.Itoa(instr.LineNumber)+": $"+GetRegName(instr.RD)+" = 0x%X\n", uint32(value))
+	vm.Print(output)
+
 	return nil
 }
 
 func (vm *VirtualMachine) PDEC(instr Instruction) error {
 	value := vm.Registers[instr.RD]
-	fmt.Println(value)
+	output := fmt.Sprintf("Line "+strconv.Itoa(instr.LineNumber)+": $"+GetRegName(instr.RD)+" = %d\n", uint32(value))
+	vm.Print(output)
+
 	return nil
 }

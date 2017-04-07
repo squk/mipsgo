@@ -1,6 +1,9 @@
 package simulator
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type Parser struct {
 	Tokens       []Token
@@ -112,12 +115,15 @@ func (p *Parser) ParseOperation(index int) int {
 	return i
 }
 
-func (p *Parser) PrintInstructions() {
-	fmt.Println("Instructions: ")
-
-	fmt.Println("\tOP\tRD\tRS\tRT\tIMM\tLBL")
+func (p *Parser) GetInstructions() string {
+	str := "Instructions: \n"
+	str += "\tOP\tRD\tRS\tRT\tIMM\tLBL\n"
 
 	for _, instr := range p.Instructions {
-		fmt.Println("\t", instr.OpCode, "\t", instr.RD, "\t", instr.RS, "\t", instr.RT, "\t", instr.Immediate, "\t", instr.Label)
+		str += ("\t" + strconv.Itoa(instr.OpCode) + "\t" +
+			strconv.Itoa(instr.RD) + "\t" + strconv.Itoa(instr.RS) + "\t" +
+			strconv.Itoa(instr.RT) + "\t" + strconv.FormatInt(int64(instr.Immediate), 10) + "\t" +
+			instr.Label + "\n")
 	}
+	return str
 }

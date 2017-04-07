@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -229,9 +228,12 @@ func (l *Lexer) LexWord(index int) int {
 	return newIndex + 1
 }
 
-func (l *Lexer) PrintTokens() {
-	fmt.Println("Tokens: ")
+func (l *Lexer) GetTokens() string {
+	str := "Tokens: \n"
+
 	for _, tk := range l.Tokens {
-		fmt.Println("\t", Categories[tk.Category], "\t", tk.ID, "\t", tk.HasNL)
+		str += ("\t" + Categories[tk.Category] + "\t" +
+			tk.ID + "\t" + strconv.FormatBool(tk.HasNL) + "\n")
 	}
+	return str
 }

@@ -54,8 +54,6 @@ func (s *Simulator) SetSource(src string) {
 func (s *Simulator) PreProcess() {
 	s.Lexer.Lex()
 	s.Parser.Parse(s.Lexer.Tokens)
-	s.Lexer.PrintTokens()
-	s.Parser.PrintInstructions()
 }
 
 func (s *Simulator) Run() {
@@ -67,6 +65,10 @@ func (s *Simulator) Run() {
 
 	elapsed := time.Since(start)
 	fmt.Printf("Parse and Run took: %s \n", elapsed)
+}
+
+func (s *Simulator) GetTokensAndInstructions() string {
+	return s.Lexer.GetTokens() + s.Parser.GetInstructions()
 }
 
 func (s *Simulator) Step() {

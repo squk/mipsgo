@@ -7,9 +7,10 @@ type VirtualMachine struct {
 	Instructions *([]Instruction)
 	Memory       VMem
 	PC           int32
+	Outputs      []string
 }
 
-var reg_map = map[string]int{
+var RegMap = map[string]int{
 	"zero": 0,
 	"at":   1,
 	"v0":   2,
@@ -47,6 +48,7 @@ var reg_map = map[string]int{
 func InitVM() VirtualMachine {
 	var vm VirtualMachine
 	vm.Registers = make([]int32, 32)
+	vm.Outputs = make([]string, 0)
 	vm.Memory = InitMemory()
 	vm.PC = 0
 	return vm
@@ -57,7 +59,7 @@ func (vm *VirtualMachine) GetReg(s string) *int32 {
 	placeholder := int32(1)
 	reg = &placeholder
 
-	if val, ok := reg_map[s]; ok {
+	if val, ok := RegMap[s]; ok {
 		if val < len(vm.Registers) {
 			reg = &vm.Registers[val]
 		}
@@ -67,11 +69,37 @@ func (vm *VirtualMachine) GetReg(s string) *int32 {
 }
 
 func GetRegNumber(s string) int {
-	if val, ok := reg_map[s]; ok {
+	if val, ok := RegMap[s]; ok {
 		return val
 	} else {
 		return 0
 	}
+}
+
+func GetRegName(n int) string {
+	name := ""
+
+	for k, v := range RegMap {
+		if v == n {
+			name = k
+		}
+	}
+
+	return name
+}
+
+func (vm *VirtualMachine) GetMappedRegisters() map[string]int32 {
+	newMap := make(map[string]int32, 32)
+
+	for k, i := range RegMap {
+		newMap[k] = vm.Registers[i]
+	}
+
+	return newMap
+}
+
+func (vm *VirtualMachine) Print(str string) {
+	vm.Outputs = append(vm.Outputs, str)
 }
 
 func (vm *VirtualMachine) RunInstruction() {
