@@ -1,158 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>ACE in Action</title>
-
-    <title>Chat Example</title>
-    <style type="text/css">
+    <head>
+        <title>MIPSGO</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <script src="/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <style type="text/css">
 html {
-  overflow: hidden;
+    overflow: hidden;
+    width:100%;
+    height:100%;
 }
 
   body {
-    display:flex;
-    justify-content: center;
-    align-items: flex-start;
-    margin-top: 2em;
-    width: 100%;
-    height: 100%;
-    background: #333;
+      width:100%;
+      height:100%;
   }
 
   div {
-    box-sizing: border-box;
+      box-sizing: border-box;
 
   }
   .main-container {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
+      display: flex;
+      width: 100%;
+      height: 100%;
   }
 
   .left-container {
-    flex: 0 1 50%;
-    min-height: 100%;
-    max-width: 50%;
-    <!--border: 1px solid grey;-->
-    padding: .5em;
+      flex: 0 1 40%;
+      min-height: 100%;
+      max-width: 40%;
+      border: 1px solid #19404A;
+      padding: .5em;
   }
 
   .right-container {
-    flex: 0 1 50%;
-    display: flex;
-    height: 100%;
-    max-width: 50%;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: flex-start;
+      flex: 0 1 60%;
+      display: flex;
+      height: 100%;
+      min-height: 800px;
+      max-width: 60%;
+      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: flex-start;
   }
 
   .registers {
-    flex: 0 1 50%;
-    display: flex;
-    height: 50%;
-    max-width: 100%;
-    min-height: 400px;
-    flex-wrap: wrap;
-    align-items: flex-start;
+      display: flex;
+      flex: 0 1 50%;
+      height: 100%;
+      width:100%;
+      min-height: 400px;
+      max-width: 100%;
+      flex-wrap: wrap;
+      flex-direction:column;
+      padding: 10px;
   }
 
-  .console {
-    flex: 0 1 50%;
-    display: flex;
-    height: 50%;
-    min-height: 400px;
-    max-width: 100%;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    background: black:
+  #console {
+      height: 400px;
+      width:100%;
+      overflow:auto;
+      overflow-y: scroll;
+      color: #839496;
+  }
+  ::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 7px;
+  }
+  ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: rgba(0,0,0,.5);
+      -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+  }
+
+  textarea {
+      flex: 1;
+      width: 100%;
+      height: 100%;
   }
 
   #editor {
-    position: relative;
-    display:flex;
-    width: 100%;
-    height: 800px;
+      position: relative;
+      display:flex;
+      width: 100%;
+      height: 100%;
   }
-    </style>
-  </head>
 
-  <script src="/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-  <body>
-    <div class="main-container">
-      <div class="left-container">
-        <input type="button" onclick="run_src()" value="RUN" id="run"/>
-        <input type="button" onclick="step_src()" value="STEP" id="step"/>
+  .container {
+      width: 100%;
+      height: 100%;
+  }
+        </style>
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="left-container">
+                <div id="editor"></div>
+            </div>
+            <div class="right-container">
+                <div class="col-lg-12">
+                    <div class="row" style="width:100%; padding:10px;">
+                        <div class="col-lg-12 text-center">
+                            <button type="button" class="btn btn-success btn-lg" id="run"/>
+                                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-info btn-lg" id="step">
+                                <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-warning btn-lg" id="break">
+                                <span class="glyphicon glyphicon-certificate" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
 
-        <div id="editor"> addi $t0, $0, 10
- sll $t0, $t0, 3
- pbin $t0
+                    <div class="" style="height:100%;">
+                        <div class="bs-component">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#registers-tab" data-toggle="tab">Registers</a></li>
+                                <li><a href="#console-tab" data-toggle="tab">Console</a></li>
+                                <li><a href="#memory-tab" data-toggle="tab">Memory</a></li>
+                            </ul>
+                            <div id="tabs" class="tab-content" style="padding-top:10px;">
+                                <div class="tab-pane fade active in" id="registers-tab">
+                                    <div class="col-lg-4">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">Temporaries</div>
+                                            <table class="table">
+                                                <tr><th scope="row">$t0</th><td class="reg" id="t0">0</td></tr>
+                                                <tr><th scope="row">$t1</th><td class="reg" id="t1">0</td></tr>
+                                                <tr><th scope="row">$t2</th><td class="reg" id="t2">0</td></tr>
+                                                <tr><th scope="row">$t3</th><td class="reg" id="t3">0</td></tr>
+                                                <tr><th scope="row">$t4</th><td class="reg" id="t4">0</td></tr>
+                                                <tr><th scope="row">$t5</th><td class="reg" id="t5">0</td></tr>
+                                                <tr><th scope="row">$t6</th><td class="reg" id="t6">0</td></tr>
+                                                <tr><th scope="row">$t7</th><td class="reg" id="t7">0</td></tr>
+                                                <tr><th scope="row">$t8</th><td class="reg" id="t8">0</td></tr>
+                                                <tr><th scope="row">$t9</th><td class="reg" id="t9">0</td></tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">Saves</div>
+                                            <table class="table">
+                                                <tr><th scope="row">$s0</td><td id="s0">0</td></tr>
+                                                <tr><th scope="row">$s1</td><td id="s1">0</td></tr>
+                                                <tr><th scope="row">$s2</td><td id="s2">0</td></tr>
+                                                <tr><th scope="row">$s3</td><td id="s3">0</td></tr>
+                                                <tr><th scope="row">$s4</td><td id="s4">0</td></tr>
+                                                <tr><th scope="row">$s5</td><td id="s5">0</td></tr>
+                                                <tr><th scope="row">$s6</td><td id="s6">0</td></tr>
+                                                <tr><th scope="row">$s7</td><td id="s7">0</td></tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="row">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">Arguments</div>
+                                                <table class="table">
+                                                    <tr><th scope="row">$a0</td><td id="a0">0</td></tr>
+                                                    <tr><th scope="row">$a1</td><td id="a1">0</td></tr>
+                                                    <tr><th scope="row">$a2</td><td id="a2">0</td></tr>
+                                                    <tr><th scope="row">$a3</td><td id="a3">0</td></tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">Return Values</div>
+                                                <table class="table">
+                                                    <tr><th scope="row">$v0</td><td id="v0">0</td></tr>
+                                                    <tr><th scope="row">$v1</td><td id="v1">0</td></tr>
+                                                </table>
+                                            </div>
+                                        </div>
+				                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="console-tab">
+                                    <pre id="console" class="well">
+                                    </pre>
+                                </div>
+                                <div class="tab-pane fade" id="memory-tab">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="right-container">
-        <div class="registers">
-          <h4>Registers</h4>
-        </div>
-        <div class="console">
-          <h4>Console</h4>
-        </div>
-      </div>
-    </div>
-  </body>
-
-  <script>
-var conn;
-var editor
-
-function step_src() {
-  src = editor.getValue();
-  if (!conn) {
-    return false;
-  }
-  conn.send(JSON.stringify({ Source: src, Command: "step"}));
-  return false;
-}
-
-function run_src() {
-  src = editor.getValue();
-  if (!conn) {
-    return false;
-  }
-  conn.send(JSON.stringify({ Source: src, Command: "run"}));
-  return false;
-}
-
-window.onload = function () {
-  var log = document.getElementById("log");
-
-  function appendLog(item) {
-    var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
-    log.appendChild(item);
-    if (doScroll) {
-      log.scrollTop = log.scrollHeight - log.clientHeight;
-    }
-  }
-
-  if (window["WebSocket"]) {
-    conn = new WebSocket("ws://" + document.location.host + "/ws");
-    conn.onclose = function (evt) {
-
-    };
-    conn.onmessage = function (evt) {
-      var messages = evt.data.split('\n');
-      for (var i = 0; i < messages.length; i++) {
-
-      }
-    };
-  } else {
-    var item = document.createElement("div");
-    item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
-  }
-};
-editor = ace.edit("editor");
-editor.setTheme("ace/theme/solarized_dark");
-editor.getSession().setMode("ace/mode/assembly_x86");
-  </script>
-  </body>
+    </body>
+    <script src="/js/interface.js" type="text/javascript" charset="utf-8"></script>
 </html>
