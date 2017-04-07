@@ -43,10 +43,25 @@ func (p *Parser) ParseLabel(index int) int {
 			labelInstruction.LineNumber = p.Tokens[index].LineNumber
 			p.Instructions = append(p.Instructions, labelInstruction)
 			newIndex++
+		} else {
+			// for some reason an identifier exists that isn't a label or a KW
+			newIndex = p.SkipPastNL(newIndex)
 		}
 	}
 
 	return newIndex
+}
+
+func (p *Parser) SkipPastNL(index int) int {
+	newIndex := index
+
+	for i := index; i < len(p.Tokens); i++ {
+		if p.Tokens[i].HasNL {
+			newIndex = i
+		}
+	}
+
+	return newIndex + 1
 }
 
 func (p *Parser) ParseOperation(index int) int {
@@ -60,7 +75,7 @@ func (p *Parser) ParseOperation(index int) int {
 	}
 
 	// no matching opcode found	OR noop
-	if instr.OpCode == 0 {
+	if instr.OpCode <= 0 {
 		return newIndex
 	}
 

@@ -53,15 +53,36 @@ func InitVM() VirtualMachine {
 }
 
 func (vm *VirtualMachine) GetReg(s string) *int32 {
-	return &(vm.Registers[reg_map[s]])
+	var reg *int32
+	placeholder := int32(1)
+	reg = &placeholder
+
+	if val, ok := reg_map[s]; ok {
+		if val < len(vm.Registers) {
+			reg = &vm.Registers[val]
+		}
+	}
+
+	return reg
 }
 
 func GetRegNumber(s string) int {
-	return reg_map[s]
+	if val, ok := reg_map[s]; ok {
+		return val
+	} else {
+		return 0
+	}
 }
 
 func (vm *VirtualMachine) RunInstruction() {
 	var err error
+	if vm.Instructions == nil {
+		fmt.Errorf("NIL instructions")
+		return
+	}
+	if int(vm.PC) > len(*vm.Instructions) {
+		return
+	}
 	instr := (*vm.Instructions)[vm.PC]
 
 	switch operations[instr.OpCode] {

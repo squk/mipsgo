@@ -26,7 +26,6 @@ func ValidateInstruction(instr Instruction, format int) error {
 		 * label for the argument we're passing */
 
 		if instr.RT != -1 {
-
 			return errors.New(message + "Register passed as argument instead of immediate")
 		}
 	} else if format == J {
@@ -73,7 +72,7 @@ func (vm *VirtualMachine) SUB(instr Instruction) error {
 
 func (vm *VirtualMachine) SLL(instr Instruction) error {
 	if instr.RD == -1 {
-		return errors.New("Line " + string(instr.LineNumber) + ": Missing register")
+		return errors.New("Line " + strconv.Itoa(instr.LineNumber) + ": Missing register")
 	}
 
 	shamt := instr.Immediate
