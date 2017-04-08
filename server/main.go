@@ -44,6 +44,9 @@ type Request struct {
 	Sender  string `json:"sender,omitempty"`
 	Source  string `json:"source,omitempty"`
 	Command string `json:"command,omitempty"`
+	Data    struct {
+		MemRange int `json:"mem_range"`
+	} `json:"Data"`
 }
 
 var manager = ClientManager{
@@ -89,6 +92,7 @@ func (manager *ClientManager) send(message []byte, ignore *Client) {
 type Response struct {
 	RegisterContents map[string]int32 `json:"registers"`
 	Output           string           `json:"output"`
+	Memory           string           `json:"memory"`
 }
 
 func (c *Client) read() {
@@ -115,33 +119,41 @@ func (c *Client) read() {
 				c.simulator.SetSource(req.Source)
 			}
 		} else if req.Command == "setMem" {
-
 			// TODO: allow setting of memory in hexadecimal
 		}
 
-		go func() {
-			if req.Command == "run" {
-				defer c.simulator.Init()
-				c.simulator.SetSource(req.Source)
-				c.simulator.Run()
-				c.response.Output += c.simulator.Lexer.GetTokens() + "\n"
-				c.response.RegisterContents = c.simulator.VM.GetMappedRegisters()
-
-				for _, out := range c.simulator.VM.Outputs {
-					c.response.Output += out
-				}
-
-				resp, err := json.Marshal(c.response)
-				if err != nil {
-					fmt.Println("Error marshalling console output for browser")
-				} else {
-					c.socket.WriteMessage(websocket.TextMessage, resp)
-
-				}
-				c.response = Response{}
-			}
-		}()
+		if req.Command == "run" {
+			go c.remoteRun(req)
+		}
 	}
+}
+
+func (c *Client) remoteRun(req Request) {
+	defer c.simulator.Init()
+	c.simulator.SetSource(req.Source)
+	err := c.simulator.Run()
+
+	c.response.Output += "Run complete...\n"
+	if err != nil {
+		c.response.Output += err.Error() + "\n"
+	}
+
+	c.response.Memory = c.simulator.VM.Memory.ToText()
+	c.response.RegisterContents = c.simulator.VM.GetMappedRegisters()
+
+	for _, out := range c.simulator.VM.Outputs {
+		c.response.Output += out
+	}
+	c.response.Output += "\n"
+
+	resp, err := json.Marshal(c.response)
+	if err != nil {
+		fmt.Println("Error marshalling console output for browser")
+	} else {
+		c.socket.WriteMessage(websocket.TextMessage, resp)
+
+	}
+	c.response = Response{}
 }
 
 func (c *Client) write() {
@@ -193,5 +205,6 @@ func main() {
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/ws", wsPage)
+	serveSingle("/editor.html", "./editor.html")
 	http.ListenAndServe(":"+port, nil)
 }
