@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -162,10 +163,14 @@ func (l *Lexer) LexWS(index int) int {
 func (l *Lexer) LexNumber(index int) int {
 	var collected string
 	newIndex := index
+	isHex := false
 
 	for i := index; i < len(l.Raw); i++ {
 		c := l.Raw[i]
 
+		if c == 'x' || c == 'X' {
+			isHex = true
+		}
 		if (c >= '0' && c <= '9') || c == '-' {
 			collected += string(c)
 		} else if c == 'E' || c == 'e' {
@@ -191,9 +196,14 @@ func (l *Lexer) LexNumber(index int) int {
 		newIndex = i
 	}
 
-	val, err := strconv.Atoi(collected)
-	if err != nil {
-		val = 0
+	var val int
+
+	if isHex {
+		x, _ := strconv.ParseInt(collected[2:], 16, 32)
+		fmt.Println(collected[2:], "is", x)
+		val = int(x)
+	} else {
+		val, _ = strconv.Atoi(collected)
 	}
 
 	token := Token{NUMBER, collected, val, false, l.LineCounter}
