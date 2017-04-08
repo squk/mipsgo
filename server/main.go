@@ -117,6 +117,7 @@ func (c *Client) read() {
 			if c.currentSource != req.Source {
 				c.currentSource = req.Source
 				c.simulator.SetSource(req.Source)
+				c.simulator.Init()
 			}
 		} else if req.Command == "setMem" {
 			// TODO: allow setting of memory in hexadecimal
