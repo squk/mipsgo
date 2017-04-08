@@ -122,18 +122,27 @@ func (c *Client) read() {
 			// TODO: allow setting of memory in hexadecimal
 		}
 
-		if req.Command == "run" {
-			go c.remoteRun(req)
+		if req.Command == "run" || req.Command == "step" {
+			go c.remoteRun(req, req.Command)
 		}
 	}
 }
 
-func (c *Client) remoteRun(req Request) {
-	defer c.simulator.Init()
-	c.simulator.SetSource(req.Source)
-	err := c.simulator.Run()
+func (c *Client) remoteRun(req Request, cmd string) {
+	defer c.simulator.ClearOutputs()
 
-	c.response.Output += "Run complete...\n"
+	if !c.simulator.Running {
+		c.simulator.Init()
+		c.simulator.SetSource(req.Source)
+	}
+	var err error = nil
+	if cmd == "run" {
+		err = c.simulator.Run()
+		c.response.Output += "Run complete...\n"
+	} else if cmd == "step" {
+		c.simulator.Step()
+	}
+
 	if err != nil {
 		c.response.Output += err.Error() + "\n"
 	}

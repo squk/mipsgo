@@ -55,6 +55,9 @@ func (s *Simulator) PreProcess() {
 	s.Lexer.Lex()
 	fmt.Println(s.Lexer.GetTokens())
 	s.Parser.Parse(s.Lexer.Tokens)
+
+	instructions := &(s.Parser.Instructions)
+	s.VM.Instructions = instructions
 }
 
 func (s *Simulator) Run() error {
@@ -66,6 +69,7 @@ func (s *Simulator) Run() error {
 	err := s.RunCode()
 
 	if !s.Paused {
+		s.Running = false
 		elapsed := time.Since(start)
 		fmt.Printf("Parse and Run took: %s \n", elapsed)
 	}
@@ -82,21 +86,22 @@ func (s *Simulator) Step() {
 		s.PreProcess()
 	}
 
-	if s.VM.PC <= int32(len(*s.VM.Instructions)) {
-		s.VM.RunInstruction()
+	if s.VM.Instructions != nil {
+		if s.VM.PC < int32(len(*s.VM.Instructions)) {
+			s.Running = true
+			s.VM.RunInstruction()
+		} else {
+			s.Paused = false
+			s.Running = false
+		}
 	}
 }
 
 func (s *Simulator) RunCode() error {
-	fmt.Println("Running")
-	instructions := &(s.Parser.Instructions)
-	s.VM.Instructions = instructions
-
 	pc := s.VM.PC
-	for pc != int32(len(*instructions)) && !s.Paused {
-		if operations[(*instructions)[s.VM.PC].OpCode] == "break" {
+	for pc < int32(len(*s.VM.Instructions)) && !s.Paused {
+		if operations[(*s.VM.Instructions)[s.VM.PC].OpCode] == "break" {
 			s.Paused = true
-			fmt.Println("PAUSED")
 			s.VM.Outputs = append(s.VM.Outputs, "Execution paused")
 			s.VM.PC++
 			return nil
@@ -121,4 +126,8 @@ func (s *Simulator) GetSource() {
 	}
 
 	s.Source = b
+}
+
+func (s *Simulator) ClearOutputs() {
+	s.VM.Outputs = make([]string, 0)
 }

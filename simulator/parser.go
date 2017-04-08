@@ -1,9 +1,6 @@
 package simulator
 
-import (
-	"fmt"
-	"strconv"
-)
+import "strconv"
 
 type Parser struct {
 	Tokens       []Token
@@ -17,7 +14,6 @@ func NewParser() Parser {
 }
 
 func (p *Parser) Parse(tokens []Token) {
-	fmt.Println("parsing...")
 	p.Tokens = tokens
 
 	for i := 0; i < len(p.Tokens); {

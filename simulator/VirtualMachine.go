@@ -107,7 +107,7 @@ func (vm *VirtualMachine) RunInstruction() error {
 	if vm.Instructions == nil {
 		return errors.New("No instructions provided")
 	}
-	if int(vm.PC) > len(*vm.Instructions) {
+	if int(vm.PC) >= len(*vm.Instructions) {
 		return nil
 	}
 	instr := (*vm.Instructions)[vm.PC]
