@@ -1,0 +1,46 @@
+{{ define "registers" }}
+
+<div class="col-lg-4">
+  <div class="panel panel-default">
+    <div class="panel-heading">Temporaries</div>
+    <table class="table">
+      {{ range $i := loop 10 }}
+      <tr><th scope="row">$t{{$i}}</th><td class="reg" id="t{{$i}}">0</td></tr>
+      {{end}}
+    </table>
+  </div>
+</div>
+<div class="col-lg-4">
+  <div class="panel panel-default">
+    <div class="panel-heading">Saves</div>
+    <table class="table">
+      {{ range $i := loop 8 }}
+      <tr><th scope="row">$s{{$i}}</th><td class="reg" id="s{{$i}}">0</td></tr>
+      {{end}}
+    </table>
+  </div>
+</div>
+<div class="col-lg-4">
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">Arguments</div>
+      <table class="table">
+        {{ range $i := loop 4 }}
+        <tr><th scope="row">$a{{$i}}</th><td class="reg" id="a{{$i}}">0</td></tr>
+        {{end}}
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">Return Values</div>
+      <table class="table">
+        {{ range $i := loop 2 }}
+        <tr><th scope="row">$v{{$i}}</th><td class="reg" id="v{{$i}}">0</td></tr>
+        {{end}}
+      </table>
+    </div>
+  </div>
+</div>
+
+{{ end }}

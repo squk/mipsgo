@@ -41,60 +41,7 @@
               </ul>
               <div id="tabs" class="tab-content" style="padding-top:10px;">
                 <div class="tab-pane fade active in" id="registers-tab">
-                  <div class="col-lg-4">
-                    <div class="panel panel-default">
-                      <div class="panel-heading">Temporaries</div>
-                      <table class="table">
-                        <tr><th scope="row">$t0</th><td class="reg" id="t0">0</td></tr>
-                        <tr><th scope="row">$t1</th><td class="reg" id="t1">0</td></tr>
-                        <tr><th scope="row">$t2</th><td class="reg" id="t2">0</td></tr>
-                        <tr><th scope="row">$t3</th><td class="reg" id="t3">0</td></tr>
-                        <tr><th scope="row">$t4</th><td class="reg" id="t4">0</td></tr>
-                        <tr><th scope="row">$t5</th><td class="reg" id="t5">0</td></tr>
-                        <tr><th scope="row">$t6</th><td class="reg" id="t6">0</td></tr>
-                        <tr><th scope="row">$t7</th><td class="reg" id="t7">0</td></tr>
-                        <tr><th scope="row">$t8</th><td class="reg" id="t8">0</td></tr>
-                        <tr><th scope="row">$t9</th><td class="reg" id="t9">0</td></tr>
-                      </table>
-                    </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="panel panel-default">
-                      <div class="panel-heading">Saves</div>
-                      <table class="table">
-                        <tr><th scope="row">$s0</td><td id="s0">0</td></tr>
-                        <tr><th scope="row">$s1</td><td id="s1">0</td></tr>
-                        <tr><th scope="row">$s2</td><td id="s2">0</td></tr>
-                        <tr><th scope="row">$s3</td><td id="s3">0</td></tr>
-                        <tr><th scope="row">$s4</td><td id="s4">0</td></tr>
-                        <tr><th scope="row">$s5</td><td id="s5">0</td></tr>
-                        <tr><th scope="row">$s6</td><td id="s6">0</td></tr>
-                        <tr><th scope="row">$s7</td><td id="s7">0</td></tr>
-                      </table>
-                    </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="row">
-                      <div class="panel panel-default">
-                        <div class="panel-heading">Arguments</div>
-                        <table class="table">
-                          <tr><th scope="row">$a0</td><td id="a0">0</td></tr>
-                          <tr><th scope="row">$a1</td><td id="a1">0</td></tr>
-                          <tr><th scope="row">$a2</td><td id="a2">0</td></tr>
-                          <tr><th scope="row">$a3</td><td id="a3">0</td></tr>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="panel panel-default">
-                        <div class="panel-heading">Return Values</div>
-                        <table class="table">
-                          <tr><th scope="row">$v0</td><td id="v0">0</td></tr>
-                          <tr><th scope="row">$v1</td><td id="v1">0</td></tr>
-                        </table>
-                      </div>
-                    </div>
-				          </div>
+                  {{ template "registers"  }}
                 </div>
                 <div class="tab-pane fade" id="console-tab">
                   <pre id="console" class="well">
@@ -102,41 +49,7 @@
                   <button type="button" class="btn btn-warning" id="clear">Clear Log</button>
                 </div>
                 <div class="tab-pane fade" id="memory-tab">
-                  <h3>Memory Viewer/Editor</h3>
-                  <div class="row">
-                    <div class="col-lg-12">
-                      <button type="button" class="btn btn-success" id="writememory">Write Memory</button>
-                      <button type="button" class="btn btn-warning" id="clearmemory">Clear Memory</button>
-                      <br>
-                      <small> *You must write memory
-                        after clearing or editing it
-                        for changes to apply. Any modifications beyond the upper bounds of your selected range will be truncated. </small>
-                      <nav aria-label="...">
-                        <ul class="pagination">
-                          <li><a href="#" onclick='set_memrange(0)'>0x0000 - 0x1FFF</a> </li>
-                          <li><a href="#" onclick='set_memrange(1)'>0x2000 - 0x3FFF</a> </li>
-                        </ul>
-                      </nav>
-                    </div>
-                  </div>
-                  <div id="memory">
-                    <div id="memEditor">
-                      <br>
-                      <table border>
-                        <td>
-                        </td>
-                        <td id="topE">
-                          <tr>
-                            <td id="leftE" width=80><p>00000000</p></td>
-                            <td>
-                              <textarea spellcheck=false id="middleE" cols=48>
-                              </textarea>
-                            </td>
-                            <td width=160 id="rightE">.</td>
-                          </tr>
-                      </table>
-                    </div>
-                  </div>
+                  {{ template "memory" }}
                 </div>
               </div>
             </div>

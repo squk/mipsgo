@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"math/rand"
 	"net/http"
 	"os"
 
@@ -187,8 +189,27 @@ func wsPage(res http.ResponseWriter, r *http.Request) {
 	go client.write()
 }
 
+var templates = template.Must(template.New("temps").Funcs(template.FuncMap{
+	"minus": func(a, b int) int {
+		return a - b
+	},
+	"plus": func(a, b int) int {
+		return a + b
+	},
+	"rand": func(n int) int {
+		return rand.Intn(n)
+	},
+	"loop": func(n int) []int {
+		var arr = make([]int, n)
+		for i := 0; i < n; i++ {
+			arr[i] = i
+		}
+		return arr
+	},
+}).ParseGlob("public/*.html"))
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./public/index.html")
+	templates.ExecuteTemplate(w, "index.html", nil)
 }
 
 func handleFileServers(directories []string) {
@@ -215,6 +236,7 @@ func main() {
 	handleFileServers([]string{"css", "fonts", "js", "js/ace"})
 
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/index.html", indexHandler)
 	http.HandleFunc("/ws", wsPage)
 	http.ListenAndServe(":"+port, nil)
 }

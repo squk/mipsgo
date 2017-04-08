@@ -1,0 +1,39 @@
+{{ define "memory" }}
+
+<h3>Memory Viewer/Editor</h3>
+<div class="row">
+  <div class="col-lg-12">
+    <button type="button" class="btn btn-success" id="writememory">Write Memory</button>
+    <button type="button" class="btn btn-warning" id="clearmemory">Clear Memory</button>
+    <br>
+    <small> *You must write memory
+      after clearing or editing it
+      for changes to apply. Any modifications beyond the upper bounds of your selected range will be truncated. </small>
+    <nav aria-label="...">
+      <ul class="pagination">
+        <li><a href="#" onclick='set_memrange(0)'>0x0000 - 0x1FFF</a> </li>
+        <li><a href="#" onclick='set_memrange(1)'>0x2000 - 0x3FFF</a> </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+<div id="memory">
+  <div id="memEditor">
+    <br>
+    <table border>
+      <td>
+      </td>
+      <td id="topE">
+        <tr>
+          <td id="leftE" width=80><p>00000000</p></td>
+          <td>
+            <textarea spellcheck=false id="middleE" cols=48>
+            </textarea>
+          </td>
+          <td width=160 id="rightE">.</td>
+        </tr>
+    </table>
+  </div>
+</div>
+
+{{ end }}
