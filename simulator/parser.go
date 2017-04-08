@@ -23,11 +23,7 @@ func (p *Parser) Parse(tokens []Token) {
 	for i := 0; i < len(p.Tokens); {
 		tk := p.Tokens[i]
 		if tk.Category == KEYWORD {
-			if tk.ID == "break" {
-				// TODO: Implement a breakpoint pseudo-instruction
-			} else {
-				i = p.ParseOperation(i)
-			}
+			i = p.ParseOperation(i)
 		} else if tk.Category == TEXT {
 			i = p.ParseLabel(i)
 		}
@@ -81,6 +77,10 @@ func (p *Parser) ParseOperation(index int) int {
 	if instr.OpCode <= 0 {
 		return newIndex
 	}
+	if operations[instr.OpCode] == "break" {
+		p.Instructions = append(p.Instructions, instr)
+		return newIndex
+	}
 
 	var i int
 
@@ -103,6 +103,8 @@ func (p *Parser) ParseOperation(index int) int {
 			instr.Immediate = int32(tk.Value)
 		} else if tk.Category == TEXT {
 			instr.Label = tk.ID
+		} else {
+			break
 		}
 
 		if tk.HasNL {

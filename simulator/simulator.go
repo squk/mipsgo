@@ -59,13 +59,16 @@ func (s *Simulator) PreProcess() {
 
 func (s *Simulator) Run() error {
 	s.Running = true
+	s.Paused = false
 	start := time.Now()
 
 	s.PreProcess()
 	err := s.RunCode()
 
-	elapsed := time.Since(start)
-	fmt.Printf("Parse and Run took: %s \n", elapsed)
+	if !s.Paused {
+		elapsed := time.Since(start)
+		fmt.Printf("Parse and Run took: %s \n", elapsed)
+	}
 	return err
 }
 
@@ -91,10 +94,19 @@ func (s *Simulator) RunCode() error {
 
 	pc := s.VM.PC
 	for pc != int32(len(*instructions)) && !s.Paused {
-		err := s.VM.RunInstruction()
-		pc = s.VM.PC
-		if err != nil {
-			return err
+		if operations[(*instructions)[s.VM.PC].OpCode] == "break" {
+			s.Paused = true
+			fmt.Println("PAUSED")
+			s.VM.Outputs = append(s.VM.Outputs, "Execution paused")
+			s.VM.PC++
+			return nil
+		} else {
+			err := s.VM.RunInstruction()
+			pc = s.VM.PC
+
+			if err != nil {
+				return err
+			}
 		}
 	}
 

@@ -8,7 +8,7 @@ var operations = [...]string{
 	"lw", "mfhi", "mflo", "mult", "multu", "or",
 	"ori", "sb", "sll", "sllv", "slt", "slti", "sltiu",
 	"sltu", "sra", "srl", "srlv", "sub", "subu", "sw",
-	"syscall", "xor", "xori", "pbin", "phex", "pdec",
+	"syscall", "xor", "xori", "pbin", "phex", "pdec", "break",
 }
 
 func GetOpCode(str string) int {
