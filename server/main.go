@@ -44,9 +44,6 @@ type Request struct {
 	Sender  string `json:"sender,omitempty"`
 	Source  string `json:"source,omitempty"`
 	Command string `json:"command,omitempty"`
-	Data    struct {
-		MemRange int `json:"mem_range"`
-	} `json:"Data"`
 }
 
 var manager = ClientManager{
@@ -93,6 +90,9 @@ type Response struct {
 	RegisterContents map[string]int32 `json:"registers"`
 	Output           string           `json:"output"`
 	Memory           string           `json:"memory"`
+	Data             struct {
+		CurrentLine int `json:"current_line"`
+	} `json:"data"`
 }
 
 func (c *Client) read() {
@@ -154,6 +154,8 @@ func (c *Client) remoteRun(req Request, cmd string) {
 		c.response.Output += out
 	}
 	c.response.Output += "\n"
+	c.response.Data.CurrentLine = c.simulator.GetCurrentLine()
+	fmt.Println(c.simulator.GetCurrentLine())
 
 	resp, err := json.Marshal(c.response)
 	if err != nil {
@@ -162,6 +164,8 @@ func (c *Client) remoteRun(req Request, cmd string) {
 		c.socket.WriteMessage(websocket.TextMessage, resp)
 
 	}
+
+	// clear response
 	c.response = Response{}
 }
 

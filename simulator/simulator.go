@@ -131,3 +131,16 @@ func (s *Simulator) GetSource() {
 func (s *Simulator) ClearOutputs() {
 	s.VM.Outputs = make([]string, 0)
 }
+
+func (s *Simulator) GetCurrentLine() int {
+	line := 1
+	if s.VM.Instructions != nil {
+		if s.VM.PC < int32(len(*s.VM.Instructions)) {
+			// we have to look at the instructions in order to determing line
+			// number since PC is simply the current instruction
+			line = (*s.VM.Instructions)[s.VM.PC].LineNumber
+		}
+	}
+
+	return line
+}

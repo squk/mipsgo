@@ -107,9 +107,10 @@ func (l *Lexer) SkipComment(index int) int {
 		c := l.Raw[i]
 
 		if c == '\n' {
-			// marks HasNL flag on token preceding the comment
-			l.Tokens[len(l.Tokens)-1].HasNL = true
 			l.LineCounter++
+			if len(l.Tokens) > 0 {
+				l.Tokens[len(l.Tokens)-1].HasNL = true
+			}
 			break
 		}
 		newIndex = i
@@ -199,8 +200,8 @@ func (l *Lexer) LexNumber(index int) int {
 	var val int
 
 	if isHex {
-		x, _ := strconv.ParseInt(collected[2:], 16, 32)
-		fmt.Println(collected[2:], "is", x)
+		x, _ := strconv.ParseInt(collected[2:len(collected)], 16, 32)
+		fmt.Println(collected[2:len(collected)], "is", x)
 		val = int(x)
 	} else {
 		val, _ = strconv.Atoi(collected)
