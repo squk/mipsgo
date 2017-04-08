@@ -1,6 +1,8 @@
 package simulator
 
-const VIRTUAL_MEMORY_SIZE int32 = (2 << 16)
+import "fmt"
+
+const VIRTUAL_MEMORY_SIZE int32 = (2 << 0xD)
 
 type HWORD int16
 type WORD int32
@@ -33,4 +35,13 @@ func (m *VMem) GetWord(pos int32) WORD {
 
 func (m *VMem) Wipe() {
 	m.Mem = make([]WORD, VIRTUAL_MEMORY_SIZE)
+}
+
+func (m *VMem) ToText() string {
+	mem := ""
+
+	for _, word := range m.Mem {
+		mem += fmt.Sprintf("%X", word)
+	}
+	return mem
 }
