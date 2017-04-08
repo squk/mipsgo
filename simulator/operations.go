@@ -25,7 +25,7 @@ func ValidateInstruction(instr Instruction, format int) error {
 		 * parsing different instruction formats differently just to change the
 		 * label for the argument we're passing */
 
-		if instr.RT != -1 {
+		if instr.RT != -1 || instr.RD == -1 || instr.RS == -1 {
 			return errors.New(message + "Register passed as argument instead of immediate")
 		}
 	} else if format == J {
