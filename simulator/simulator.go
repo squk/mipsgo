@@ -53,7 +53,6 @@ func (s *Simulator) SetSource(src string) {
 
 func (s *Simulator) PreProcess() {
 	s.Lexer.Lex()
-	fmt.Println(s.Lexer.GetTokens())
 	s.Parser.Parse(s.Lexer.Tokens)
 
 	instructions := &(s.Parser.Instructions)

@@ -139,7 +139,9 @@ func (c *Client) remoteRun(req Request, cmd string) {
 	var err error = nil
 	if cmd == "run" {
 		err = c.simulator.Run()
-		c.response.Output += "Run complete...\n"
+		if !c.simulator.Paused {
+			c.response.Output += "Run complete...\n"
+		}
 	} else if cmd == "step" {
 		c.simulator.Step()
 	}
@@ -156,7 +158,6 @@ func (c *Client) remoteRun(req Request, cmd string) {
 	}
 	c.response.Output += "\n"
 	c.response.Data.CurrentLine = c.simulator.GetCurrentLine()
-	fmt.Println(c.simulator.GetCurrentLine())
 
 	resp, err := json.Marshal(c.response)
 	if err != nil {
