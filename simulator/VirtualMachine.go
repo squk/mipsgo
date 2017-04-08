@@ -1,6 +1,6 @@
 package simulator
 
-import "fmt"
+import "errors"
 
 type VirtualMachine struct {
 	Registers    []int32
@@ -102,14 +102,13 @@ func (vm *VirtualMachine) Print(str string) {
 	vm.Outputs = append(vm.Outputs, str)
 }
 
-func (vm *VirtualMachine) RunInstruction() {
+func (vm *VirtualMachine) RunInstruction() error {
 	var err error
 	if vm.Instructions == nil {
-		fmt.Errorf("NIL instructions")
-		return
+		return errors.New("No instructions provided")
 	}
 	if int(vm.PC) > len(*vm.Instructions) {
-		return
+		return nil
 	}
 	instr := (*vm.Instructions)[vm.PC]
 
@@ -150,10 +149,7 @@ func (vm *VirtualMachine) RunInstruction() {
 		break
 	}
 
-	// TODO: handle errors more gracefully than a printout
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	vm.PC++
+
+	return err
 }
