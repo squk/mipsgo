@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"net/http"
 	"os"
 
@@ -11,18 +10,6 @@ import (
 	"github.com/gorilla/websocket"
 	uuid "github.com/satori/go.uuid"
 )
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	p := 1
-	t, _ := template.ParseFiles("index.html")
-	t.Execute(w, p)
-}
-
-func serveSingle(pattern string, filename string) {
-	http.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filename)
-	})
-}
 
 type ClientManager struct {
 	clients    map[*Client]bool
@@ -200,9 +187,21 @@ func wsPage(res http.ResponseWriter, r *http.Request) {
 	go client.write()
 }
 
-func makeFileServer(dirName string) {
-	fs := http.FileServer(http.Dir(dirName))
-	http.Handle("/"+dirName+"/", http.StripPrefix("/"+dirName+"/", fs))
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./public/index.html")
+}
+
+func handleFileServers(directories []string) {
+	for _, dir := range directories {
+		d := http.FileServer(http.Dir("./public/" + dir))
+		http.Handle("/"+dir+"/", http.StripPrefix("/"+dir+"/", d))
+	}
+}
+
+func serveSingle(pattern string, filename string) {
+	http.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "public/"+filename)
+	})
 }
 
 func main() {
@@ -213,13 +212,9 @@ func main() {
 	}
 
 	go manager.start()
-	makeFileServer("ace")
-	makeFileServer("css")
-	makeFileServer("js")
-	makeFileServer("fonts")
+	handleFileServers([]string{"css", "fonts", "js", "js/ace"})
 
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/ws", wsPage)
-	serveSingle("/editor.html", "./editor.html")
 	http.ListenAndServe(":"+port, nil)
 }
