@@ -1,6 +1,8 @@
 package simulator_test
 
 import (
+	"fmt"
+
 	. "github.com/ctnieves/mipsgo/simulator"
 
 	. "github.com/onsi/ginkgo"
@@ -27,5 +29,27 @@ var _ = Describe("Lexer", func() {
 		sim = NewSimulator("# this is a test comment")
 		sim.PreProcess()
 		Expect(len(sim.Lexer.Tokens)).To(Equal(0))
+	})
+
+	It("identifies line numbers", func() {
+		sim = NewSimulator(`
+		add $t0, $t0, $t0
+		sub $t0, $t0, $t0
+
+
+
+		sub $t0, $t0, $t0
+
+
+
+
+		add $t0, $t0, $t0
+		`)
+		sim.PreProcess()
+		fmt.Println(sim.Lexer.GetTokens())
+		Expect(sim.Parser.Instructions[0].LineNumber).To(Equal(2))
+		Expect(sim.Parser.Instructions[1].LineNumber).To(Equal(3))
+		Expect(sim.Parser.Instructions[2].LineNumber).To(Equal(7))
+		Expect(sim.Parser.Instructions[3].LineNumber).To(Equal(12))
 	})
 })
