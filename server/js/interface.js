@@ -1,5 +1,7 @@
 var conn;
-var editor
+var editor;
+var mem_range = 0;
+var memory = "";
 
 $(document).ready(function() {
     $("#run").click(function() {
@@ -27,6 +29,10 @@ $(document).ready(function() {
         editor.insert("break\n");
     });
 
+    $("#clear").click(function() {
+        $("#console").empty();
+    });
+
     var log = document.getElementById("log");
 
     if (window["WebSocket"]) {
@@ -44,12 +50,18 @@ $(document).ready(function() {
             for (var reg in response["registers"]) {
                 $("#" + reg).text(response["registers"][reg]);
             }
+            if (response["memory"]) {
+              memory = response["memory"]
+              set_memrange(0);
+              console.log("Memory loaded");
+            }
         };
 
     }
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/solarized_dark");
     editor.getSession().setMode("ace/mode/assembly_x86");
+
     // set some basic starter code
     editor.setValue(" addi $t0, $0, 10\n sll $t0, $t0, 3\n pbin $t0");
 });
@@ -60,6 +72,17 @@ function logLine(str) {
     var item = document.createElement("div");
     item.innerText = str;
     log.append(item);
-    log.scrollTop($(document).height());
+    log.scrollTop(1E10);
 }
 
+function set_memrange(range) {
+  mem_range = range;
+
+  if (range == 0) {
+    $("#middleE").val(memory.substr(0, memory.length/2));
+  } else {
+    $("#middleE").val(memory.substr(memory.length/2, memory.length));
+  }
+
+  refreshMemory();
+}
