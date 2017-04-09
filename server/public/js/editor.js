@@ -1,3 +1,7 @@
+var canEdit = true;
+var lastCursor;
+var lastMem = "";
+
 $(document).ready(function() {
   // Init the top cell content
   var topContent = "";
@@ -12,6 +16,36 @@ $(document).ready(function() {
 
 
   $("#middleE")[0].oninput = refreshMemory;
+  $('#middleE').on('keydown', function(e) {
+    if( e.which == 8 || e.which == 46 )  {
+      var middle = $("#middleE");
+      canEdit = false;
+      lastMem = middle.val();
+      lastCursor = middle.val()
+        .substr(0,middle[0].selectionStart)
+        .replace(/[^0-9A-F]/ig,"")
+        .replace(/(..)/g,"$1 ")
+        .length;
+    }
+    else {
+      canEdit = true;
+    }
+  }).on('keyup', function(e) {
+    if (!canEdit) {
+      var middle = $("#middleE");
+      canEdit = true;
+
+      // previous character is a space
+      if (lastMem[lastCursor-1] == " ") {
+        lastCursor--;
+      }
+
+      lastMem = lastMem.substr(0, lastCursor-1) + "0" + lastMem.substr(lastCursor, lastMem.length);
+
+      middle.val(lastMem);
+      middle[0].setSelectionRange(lastCursor-1, lastCursor-1);
+    }
+  });
 
   // (8 hex digits per word)/2 per string * (2 << 9) words
   memory = ""
@@ -63,19 +97,29 @@ function refreshMemory() {
   var middle = $("#middleE")[0];
 
   // On input, store the length of clean hex before the textarea caret in b
-  b = middle.value
+  var val = middle.value;
+  b = val
     .substr(0,middle.selectionStart)
     .replace(/[^0-9A-F]/ig,"")
     .replace(/(..)/g,"$1 ")
     .length;
 
-  // Clean the textarea value
-  $(middle).val(middle.value
-    .replace(/[^0-9A-F]/ig,"")
-    .replace(/(..)/g,"$1 ")
-    .replace(/ $/,"")
-    .toUpperCase()
-  );
+  // next character is a space
+  if (val[b] == " ") {
+    b--
+  }
+  val = val.substr(0, b) + val.substr(b+1, val.length);
+
+  // at end of string
+  if (b < val.length) {
+    // Clean the textarea value
+    $(middle).val(val
+      .replace(/[^0-9A-F]/ig,"")
+      .replace(/(..)/g,"$1 ")
+      .replace(/ $/,"")
+      .toUpperCase()
+    );
+  }
 
   // Reset h
   h="";
@@ -103,12 +147,6 @@ function refreshMemory() {
 
   // Write h in the right column (with line breaks every 16 chars)
   $("#rightE").text(h.replace(/(.{16})/g,"$1 "));
-
-  // If the caret position is after a space or a line break, place it at
-  // the previous index so we can use backspace to erase hex code
-  if(middle.value[b] == " ") {
-    b--;
-  }
 
   // Put the textarea caret at the right place
   middle.setSelectionRange(b,b);
