@@ -95,7 +95,6 @@ textarea {
   padding:0;
   vertical-align:top;
   font:1em/1em courier;
-  max-height: 1000px;
 }
 
 #memEditor textarea {

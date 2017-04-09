@@ -3,6 +3,9 @@ var lastCursor;
 var lastMem = "";
 
 $(document).ready(function() {
+  fitMemoryEditorToWindow();
+  //$(window).resize(fitMemoryEditorToWindow);
+
   // Init the top cell content
   var topContent = "";
 
@@ -87,12 +90,10 @@ $(document).ready(function() {
       Command: "write_memory",
       Memory: formattedMemory
     }));
-    //alert(formattedMemory)
   });
 });
 
 function refreshMemory(isInput) {
-  console.log(!!isInput);
   var middle = $("#middleE")[0];
 
   // On input, store the length of clean hex before the textarea caret in b
@@ -154,4 +155,8 @@ function refreshMemory(isInput) {
 
 function memoryChanged() {
   refreshMemory(true);
+}
+
+function fitMemoryEditorToWindow() {
+    $("#memEditor").height($(window).height() - $("#memEditor").position().top - 20);
 }
