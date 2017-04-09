@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -201,7 +200,6 @@ func (l *Lexer) LexNumber(index int) int {
 
 	if isHex {
 		x, _ := strconv.ParseInt(collected[2:], 16, 32)
-		fmt.Println(collected[2:], "is", x)
 		val = int(x)
 	} else {
 		val, _ = strconv.Atoi(collected)
