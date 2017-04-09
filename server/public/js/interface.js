@@ -52,7 +52,7 @@ $(document).ready(function() {
       }
       if (response["memory"]) {
         memory = response["memory"]
-        set_memrange(0);
+        setMemory()
         console.log("Memory loaded");
       }
       var current_line = response["data"]["current_line"];
@@ -77,14 +77,7 @@ function logLine(str) {
   log.scrollTop(1E10);
 }
 
-function set_memrange(range) {
-  mem_range = range;
-
-  if (range == 0) {
-    $("#middleE").val(memory.substr(0, memory.length/2));
-  } else {
-    $("#middleE").val(memory.substr(memory.length/2, memory.length));
-  }
-
+function setMemory() {
+  $("#middleE").val(memory);
   refreshMemory();
 }

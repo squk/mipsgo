@@ -33,6 +33,16 @@ type Request struct {
 	Sender  string `json:"sender,omitempty"`
 	Source  string `json:"source,omitempty"`
 	Command string `json:"command,omitempty"`
+	Memory  string `json:"memory"`
+}
+
+type Response struct {
+	RegisterContents map[string]int32 `json:"registers"`
+	Output           string           `json:"output"`
+	Memory           string           `json:"memory"`
+	Data             struct {
+		CurrentLine int `json:"current_line"`
+	} `json:"data"`
 }
 
 var manager = ClientManager{
@@ -75,15 +85,6 @@ func (manager *ClientManager) send(message []byte, ignore *Client) {
 	}
 }
 
-type Response struct {
-	RegisterContents map[string]int32 `json:"registers"`
-	Output           string           `json:"output"`
-	Memory           string           `json:"memory"`
-	Data             struct {
-		CurrentLine int `json:"current_line"`
-	} `json:"data"`
-}
-
 func (c *Client) read() {
 	defer func() {
 		manager.unregister <- c
@@ -108,8 +109,9 @@ func (c *Client) read() {
 				c.simulator.SetSource(req.Source)
 				c.simulator.Init()
 			}
-		} else if req.Command == "setMem" {
-			// TODO: allow setting of memory in hexadecimal
+		} else if req.Command == "write_memory" {
+			hexString := req.Memory
+			c.simulator.VM.Memory.WriteMemory(hexString)
 		}
 
 		if req.Command == "run" || req.Command == "step" {
@@ -153,7 +155,6 @@ func (c *Client) remoteRun(req Request, cmd string) {
 		fmt.Println("Error marshalling console output for browser")
 	} else {
 		c.socket.WriteMessage(websocket.TextMessage, resp)
-
 	}
 
 	// clear response

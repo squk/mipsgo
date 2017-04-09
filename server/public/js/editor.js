@@ -14,13 +14,13 @@ $(document).ready(function() {
   $("#middleE")[0].oninput = refreshMemory;
 
   // (4 bits per hex digit * 32 bits per word) * (2 << D) words
-  for(i=0; i<(2<<13); i++) {
+  for(i=0; i<(2<<12); i++) {
     memory += "00 ";
   }
-  set_memrange(0);
+  setMemory();
 
-  $("#clearmemory").click(function() {
-    for(i=0; i<(2<<13); i++) {
+  $("#clear_memory").click(function() {
+    for(i=0; i<(2<<12); i++) {
       memory += "00 ";
     }
     set_memrange(0);
@@ -45,17 +45,13 @@ function refreshMemory() {
     .toUpperCase()
   );
 
-  // Set the height of the textarea according to its length
-  middle.style.height=(1.5+middle.value.length/47)+"em";
-
   // Reset h
   h="";
 
   // Loop on textarea lines
   for(i=0;i<middle.value.length/48;i++) {
     // Add line number to h
-    var modifier = mem_range * 8192;
-    h += (1E7+(modifier+16*i).toString(16)).slice(-8)+" ";
+    h += (1E7+(16*i).toString(16)).slice(-8)+" ";
   }
 
   // Write h on the left column
