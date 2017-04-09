@@ -121,7 +121,10 @@ func (c *Client) read() {
 			go c.remoteRun(req, req.Command)
 		} else if req.Command == WRITE_MEM {
 			hexString := req.Memory
-			c.simulator.VM.Memory.WriteMemory(hexString)
+			c.simulator.VM.Memory.Write(hexString)
+		} else if req.Command == CLEAR_MEM {
+			fmt.Println("clearing")
+			c.simulator.VM = InitVM()
 		}
 	}
 }

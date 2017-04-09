@@ -1,8 +1,13 @@
 package simulator
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
-const VIRTUAL_MEMORY_SIZE int32 = (2 << 0xD)
+// 4.096 KB of RAM, 1024 words
+const VIRTUAL_MEMORY_SIZE int32 = (2 << 9)
 
 type HWORD int16
 type WORD int32
@@ -41,7 +46,22 @@ func (m *VMem) ToText() string {
 	mem := ""
 
 	for _, word := range m.Mem {
-		mem += fmt.Sprintf("%X", word)
+		mem += fmt.Sprintf("%08X", uint32(word))
 	}
 	return mem
+}
+
+func (m *VMem) Write(hex string) {
+	for i, s := range strings.Split(hex, " ") {
+		if i < len(m.Mem) {
+			if num, err := strconv.ParseUint(s, 16, 32); err == nil {
+				m.Mem[i] = WORD(num)
+			} else {
+				fmt.Println(err)
+				m.Mem[i] = 0
+			}
+		} else {
+			break
+		}
+	}
 }

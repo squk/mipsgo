@@ -52,7 +52,7 @@ $(document).ready(function() {
       }
       if (response["memory"]) {
         memory = response["memory"]
-        setMemory()
+        setMemory();
         console.log("Memory loaded");
       }
       var current_line = response["data"]["current_line"];

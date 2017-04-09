@@ -13,17 +13,49 @@ $(document).ready(function() {
 
   $("#middleE")[0].oninput = refreshMemory;
 
-  // (4 bits per hex digit * 32 bits per word) * (2 << D) words
-  for(i=0; i<(2<<12); i++) {
+  // (8 hex digits per word)/2 per string * (2 << 9) words
+  memory = ""
+  for(var i=0; i < (2 << 9) * 4; i++) {
     memory += "00 ";
   }
   setMemory();
 
   $("#clear_memory").click(function() {
-    for(i=0; i<(2<<12); i++) {
+    src = editor.getValue();
+
+    memory = ""
+    for(var i=0; i < (2 << 9) * 4; i++) {
       memory += "00 ";
     }
-    set_memrange(0);
+    setMemory();
+
+    conn.send(JSON.stringify({
+      Source: src,
+      Command: "clear_memory"
+    }));
+
+  });
+
+  $("#write_memory").click(function() {
+    memory = $("#middleE").val()
+    src = editor.getValue();
+
+    console.log(memory.replace(/\s/g,'').length)
+
+    // 65536 is the amount of characters in our editor when filled 0x0 to 0x2000
+    var formattedMemory = memory
+      .replace(/\s/g,'')
+      .substr(0, 65536)
+      .replace(/(.{8})/g,"$1 ") // insert space every 8 characters
+
+    formattedMemory = formattedMemory.substr(0, formattedMemory.length-1)
+
+    conn.send(JSON.stringify({
+      Source: src,
+      Command: "write_memory",
+      Memory: formattedMemory
+    }));
+    //alert(formattedMemory)
   });
 });
 
@@ -49,7 +81,7 @@ function refreshMemory() {
   h="";
 
   // Loop on textarea lines
-  for(i=0;i<middle.value.length/48;i++) {
+  for(var i=0;i<middle.value.length/48;i++) {
     // Add line number to h
     h += (1E7+(16*i).toString(16)).slice(-8)+" ";
   }
@@ -61,7 +93,7 @@ function refreshMemory() {
   h="";
 
   // Loop on the hex values
-  for(i=0;i<middle.value.length;i+=3) {
+  for(var i=0;i<middle.value.length;i+=3) {
     // Convert them in numbers
     c = parseInt(middle.value.substr(i,2),16);
 
@@ -79,5 +111,5 @@ function refreshMemory() {
   }
 
   // Put the textarea caret at the right place
-  middle.setSelectionRange(b,b)
+  middle.setSelectionRange(b,b);
 }
