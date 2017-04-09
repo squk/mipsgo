@@ -29,6 +29,14 @@ type Client struct {
 	response      Response
 }
 
+// Commands used in Requests
+const (
+	RUN       = "run"
+	STEP      = "step"
+	WRITE_MEM = "write_memory"
+	CLEAR_MEM = "clear_memory"
+)
+
 type Request struct {
 	Sender  string `json:"sender,omitempty"`
 	Source  string `json:"source,omitempty"`
@@ -103,19 +111,17 @@ func (c *Client) read() {
 		req := Request{Sender: c.id}
 		err = json.Unmarshal(message, &req)
 
-		if req.Command == "run" || req.Command == "step" {
+		if req.Command == RUN || req.Command == STEP {
 			if c.currentSource != req.Source {
 				c.currentSource = req.Source
 				c.simulator.SetSource(req.Source)
 				c.simulator.Init()
 			}
-		} else if req.Command == "write_memory" {
+
+			go c.remoteRun(req, req.Command)
+		} else if req.Command == WRITE_MEM {
 			hexString := req.Memory
 			c.simulator.VM.Memory.WriteMemory(hexString)
-		}
-
-		if req.Command == "run" || req.Command == "step" {
-			go c.remoteRun(req, req.Command)
 		}
 	}
 }
@@ -128,12 +134,12 @@ func (c *Client) remoteRun(req Request, cmd string) {
 		c.simulator.SetSource(req.Source)
 	}
 	var err error = nil
-	if cmd == "run" {
+	if cmd == RUN {
 		err = c.simulator.Run()
 		if !c.simulator.Paused {
 			c.response.Output += "Run complete...\n"
 		}
-	} else if cmd == "step" {
+	} else if cmd == STEP {
 		c.simulator.Step()
 	}
 
