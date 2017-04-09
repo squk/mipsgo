@@ -114,8 +114,8 @@ func (c *Client) read() {
 		if req.Command == RUN || req.Command == STEP {
 			if c.currentSource != req.Source {
 				c.currentSource = req.Source
+				c.simulator.VM.MemoryPersistentReset()
 				c.simulator.SetSource(req.Source)
-				c.simulator.Init()
 			}
 
 			go c.remoteRun(req, req.Command)
@@ -123,8 +123,8 @@ func (c *Client) read() {
 			hexString := req.Memory
 			c.simulator.VM.Memory.Write(hexString)
 		} else if req.Command == CLEAR_MEM {
-			fmt.Println("clearing")
-			c.simulator.VM = InitVM()
+			req.Memory = ""
+			c.simulator.Init()
 		}
 	}
 }
@@ -133,7 +133,7 @@ func (c *Client) remoteRun(req Request, cmd string) {
 	defer c.simulator.ClearOutputs()
 
 	if !c.simulator.Running {
-		c.simulator.Init()
+		c.simulator.VM.MemoryPersistentReset()
 		c.simulator.SetSource(req.Source)
 	}
 	var err error = nil

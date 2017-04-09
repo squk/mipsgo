@@ -14,8 +14,8 @@ $(document).ready(function() {
   var h = "";
   var b, c;
 
+  $("#middleE")[0].oninput = memoryChanged;
 
-  $("#middleE")[0].oninput = refreshMemory;
   $('#middleE').on('keydown', function(e) {
     if( e.which == 8 || e.which == 46 )  {
       var middle = $("#middleE");
@@ -48,7 +48,7 @@ $(document).ready(function() {
   });
 
   // (8 hex digits per word)/2 per string * (2 << 9) words
-  memory = ""
+  memory = "";
   for(var i=0; i < (2 << 9) * 4; i++) {
     memory += "00 ";
   }
@@ -74,8 +74,6 @@ $(document).ready(function() {
     memory = $("#middleE").val()
     src = editor.getValue();
 
-    console.log(memory.replace(/\s/g,'').length)
-
     // 65536 is the amount of characters in our editor when filled 0x0 to 0x2000
     var formattedMemory = memory
       .replace(/\s/g,'')
@@ -93,7 +91,8 @@ $(document).ready(function() {
   });
 });
 
-function refreshMemory() {
+function refreshMemory(isInput) {
+  console.log(!!isInput);
   var middle = $("#middleE")[0];
 
   // On input, store the length of clean hex before the textarea caret in b
@@ -104,22 +103,21 @@ function refreshMemory() {
     .replace(/(..)/g,"$1 ")
     .length;
 
-  // next character is a space
-  if (val[b] == " ") {
-    b--
+  if (!!isInput) {
+    // next character is a space
+    if (val[b] == " ") {
+      b--
+    }
+    val = val.substr(0, b) + val.substr(b+1, val.length);
   }
-  val = val.substr(0, b) + val.substr(b+1, val.length);
 
-  // at end of string
-  if (b < val.length) {
-    // Clean the textarea value
-    $(middle).val(val
-      .replace(/[^0-9A-F]/ig,"")
-      .replace(/(..)/g,"$1 ")
-      .replace(/ $/,"")
-      .toUpperCase()
-    );
-  }
+  // Clean the textarea value
+  $(middle).val(val
+    .replace(/[^0-9A-F]/ig,"")
+    .replace(/(..)/g,"$1 ")
+    .replace(/ $/,"")
+    .toUpperCase()
+  );
 
   // Reset h
   h="";
@@ -148,6 +146,12 @@ function refreshMemory() {
   // Write h in the right column (with line breaks every 16 chars)
   $("#rightE").text(h.replace(/(.{16})/g,"$1 "));
 
-  // Put the textarea caret at the right place
-  middle.setSelectionRange(b,b);
+  if (!!isInput) {
+    // Put the textarea caret at the right place
+    middle.setSelectionRange(b,b);
+  }
+}
+
+function memoryChanged() {
+  refreshMemory(true);
 }

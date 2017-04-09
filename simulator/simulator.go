@@ -41,6 +41,7 @@ func NewSimulator(src string) Simulator {
 }
 
 func (s *Simulator) Init() {
+	s.Lexer = NewLexer()
 	s.Parser = NewParser()
 	s.VM = InitVM()
 }
@@ -48,6 +49,7 @@ func (s *Simulator) Init() {
 func (s *Simulator) SetSource(src string) {
 	s.Source = []byte(src)
 	s.Lexer = NewLexer()
+	s.Parser = NewParser()
 	s.Lexer.Raw = s.Source
 }
 

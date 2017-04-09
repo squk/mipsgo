@@ -54,6 +54,12 @@ func InitVM() VirtualMachine {
 	return vm
 }
 
+func (vm *VirtualMachine) MemoryPersistentReset() {
+	vm.Registers = make([]int32, 32)
+	vm.Outputs = make([]string, 0)
+	vm.PC = 0
+}
+
 func (vm *VirtualMachine) GetReg(s string) *int32 {
 	var reg *int32
 	placeholder := int32(1)

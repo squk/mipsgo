@@ -78,6 +78,7 @@ function logLine(str) {
 }
 
 function setMemory() {
+  lastMem = memory;
   $("#middleE").val(memory);
   refreshMemory();
 }

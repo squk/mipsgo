@@ -31,7 +31,7 @@ func (m *VMem) SetWord(pos int32, val WORD) {
 }
 
 func (m *VMem) GetWord(pos int32) WORD {
-	if pos > 0 && pos < VIRTUAL_MEMORY_SIZE {
+	if pos >= 0 && pos < VIRTUAL_MEMORY_SIZE {
 		return m.Mem[pos]
 	} else {
 		return 0
