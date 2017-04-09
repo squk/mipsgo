@@ -116,3 +116,9 @@ textarea {
   vertical-align:top;
   padding-top:2px;
 }
+
+pre {
+  background: #002B36;
+  color: #12A198;
+  border: 1px solid #839496;
+}

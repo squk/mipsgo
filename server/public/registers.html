@@ -1,45 +1,65 @@
 {{ define "registers" }}
 
-<div class="col-lg-4">
-  <div class="panel panel-default">
-    <div class="panel-heading">Temporaries</div>
-    <table class="table">
-      {{ range $i := loop 10 }}
-      <tr><th scope="row">$t{{$i}}</th><td class="reg" id="t{{$i}}">0</td></tr>
-      {{end}}
-    </table>
-  </div>
-</div>
-<div class="col-lg-4">
-  <div class="panel panel-default">
-    <div class="panel-heading">Saves</div>
-    <table class="table">
-      {{ range $i := loop 8 }}
-      <tr><th scope="row">$s{{$i}}</th><td class="reg" id="s{{$i}}">0</td></tr>
-      {{end}}
-    </table>
-  </div>
-</div>
-<div class="col-lg-4">
-  <div class="row">
+<div class="row">
+  <div class="col-lg-4">
     <div class="panel panel-default">
-      <div class="panel-heading">Arguments</div>
+      <div class="panel-heading">Temporaries</div>
       <table class="table">
-        {{ range $i := loop 4 }}
-        <tr><th scope="row">$a{{$i}}</th><td class="reg" id="a{{$i}}">0</td></tr>
+        {{ range $i := loop 10 }}
+        <tr><th scope="row">$t{{$i}}</th><td class="reg" id="t{{$i}}">0</td></tr>
         {{end}}
       </table>
     </div>
   </div>
-  <div class="row">
+  <div class="col-lg-4">
     <div class="panel panel-default">
-      <div class="panel-heading">Return Values</div>
+      <div class="panel-heading">Saves</div>
       <table class="table">
-        {{ range $i := loop 2 }}
-        <tr><th scope="row">$v{{$i}}</th><td class="reg" id="v{{$i}}">0</td></tr>
+        {{ range $i := loop 8 }}
+        <tr><th scope="row">$s{{$i}}</th><td class="reg" id="s{{$i}}">0</td></tr>
         {{end}}
       </table>
     </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-heading">Arguments</div>
+        <table class="table">
+          {{ range $i := loop 4 }}
+          <tr><th scope="row">$a{{$i}}</th><td class="reg" id="a{{$i}}">0</td></tr>
+          {{end}}
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-heading">Return Values</div>
+        <table class="table">
+          {{ range $i := loop 2 }}
+          <tr><th scope="row">$v{{$i}}</th><td class="reg" id="v{{$i}}">0</td></tr>
+          {{end}}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div class="row">
+  <div class="col-lg-12">
+    <h4>Helpful Info</h4>
+    <p>Write your MIPS assembly in the code editor to the left. To run it, press the green play button at the top of the window. If any errors are found, they will be displayed in the console. Use the blue step-forward button to step through your code one line at a time. The play button can be pressed at any point after clicking the step-forward button. </p>
+    <p>Press the red button at the top of the window to automatically insert a breakpoint above the currenlty selected line. Press play to continue until the next breakpoint or the end of the program or click the step-forward button to step through the remaining code. </p>
+
+    <p>MIPSGO has a few pseudo instructions implemented to make debugging a bit easier. Their names, usage, and functionality is as shown:</p>
+    <pre>
+pbin $rs  # print R[$rs] as binary
+phex $rs  # print R[$rs] as hexadecimal
+pdec $rs  # print R[$rs] as decimal
+break     # insert breakpoint</pre>
+
+    <p>Currently only a limited subset of MIPS assembly language's operations are available. Those that are currenlty supported are listed below:</p>
+    <pre>add, addi, sub, slt, sll, j, beq, bne, sw, lw, noop </pre>
   </div>
 </div>
 
