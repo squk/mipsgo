@@ -158,5 +158,5 @@ function memoryChanged() {
 }
 
 function fitMemoryEditorToWindow() {
-    $("#memEditor").height($(window).height() - $("#memEditor").position().top - 20);
+    $("#memEditor").height($(window).height() - $("#memEditor").position().top - 40);
 }

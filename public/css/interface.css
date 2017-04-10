@@ -14,8 +14,8 @@ div {
 }
 .main-container {
   display: flex;
+  height: calc(100% - 40px);
   width: 100%;
-  height: 100%;
 }
 
 .left-container {
@@ -121,4 +121,15 @@ pre {
   background: #002B36;
   color: #12A198;
   border: 1px solid #839496;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+    height: 40px;
+    padding-top: 10px;
+    color: #E7D7C0;
+    background-color: #01313F;
 }
