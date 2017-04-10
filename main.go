@@ -224,7 +224,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func handleFileServers(directories []string) {
 	for _, dir := range directories {
-		d := http.FileServer(http.Dir("public/" + dir))
+		d := http.FileServer(http.Dir("./public/" + dir))
 		http.Handle("/"+dir+"/", http.StripPrefix("/"+dir+"/", d))
 	}
 }
@@ -243,7 +243,7 @@ func main() {
 	}
 
 	go manager.start()
-	handleFileServers([]string{"css", "fonts", "js", "js/ace"})
+	handleFileServers([]string{"css", "fonts", "js"})
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/index.html", indexHandler)
