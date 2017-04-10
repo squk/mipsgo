@@ -1,12 +1,8 @@
 {
-	"ImportPath": "github.com/ctnieves/mipsgo/server",
+	"ImportPath": "github.com/ctnieves/mipsgo",
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
 	"Deps": [
-		{
-			"ImportPath": "github.com/ctnieves/mipsgo/simulator",
-			"Rev": "ec8b504c6786d16e44149aa354bd7ac61aace408"
-		},
 		{
 			"ImportPath": "github.com/gorilla/websocket",
 			"Comment": "v1.1.0-29-ga91eba7",
