@@ -247,6 +247,7 @@ func main() {
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/index.html", indexHandler)
+	serveSingle("/favicon.ico", "public/favicon.ico")
 	http.HandleFunc("/ws", wsPage)
 	http.ListenAndServe(":"+port, nil)
 }
