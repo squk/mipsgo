@@ -65,7 +65,7 @@ $(document).ready(function() {
   editor.getSession().setMode("ace/mode/assembly_x86");
 
   // set some basic starter code
-  editor.setValue(" addi $t0, $0, 10\n sll $t0, $t0, 3\n pbin $t0");
+  editor.setValue(" addi $t0, $0, 0 #index\naddi $s0, $0, 10 #number of words to read\n\nreadMemory: \n    lw $t1, 0($t0)\n    phex $t1\n    addi $t0, $t0, 1\n    bne $t0, $s0, readMemory");
 });
 
 function logLine(str) {

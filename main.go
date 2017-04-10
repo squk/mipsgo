@@ -7,10 +7,16 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	. "github.com/ctnieves/mipsgo/simulator"
 	"github.com/gorilla/websocket"
 	uuid "github.com/satori/go.uuid"
+)
+
+const (
+	pongWait   = 60 * time.Second
+	pingPeriod = 30 * time.Second
 )
 
 type ClientManager struct {
@@ -71,7 +77,7 @@ func (manager *ClientManager) start() {
 				close(conn.send)
 				delete(manager.clients, conn)
 			}
-		// sends message to all clients
+			// sends message to all clients
 		case request := <-manager.broadcast:
 			for conn := range manager.clients {
 				select {
@@ -99,6 +105,12 @@ func (c *Client) read() {
 		c.socket.Close()
 	}()
 
+	//c.socket.SetReadDealine(time.Now().Add(pongWait))
+	//c.socket.SetPongHandler(func(string) error {
+	//c.socket.SetReadDeadline(time.Now().Add(pongWait))
+	//return nil
+	//})
+
 	for {
 		_, message, err := c.socket.ReadMessage()
 
@@ -108,6 +120,7 @@ func (c *Client) read() {
 			c.socket.Close()
 			break
 		}
+
 		req := Request{Sender: c.id}
 		err = json.Unmarshal(message, &req)
 
@@ -125,6 +138,28 @@ func (c *Client) read() {
 		} else if req.Command == CLEAR_MEM {
 			req.Memory = ""
 			c.simulator.Init()
+		}
+	}
+}
+
+func (c *Client) write() {
+	ticker := time.NewTicker(pingPeriod)
+
+	defer func() {
+		ticker.Stop()
+		c.socket.Close()
+	}()
+
+	for {
+		select {
+		case _, ok := <-c.send:
+			if !ok {
+				c.socket.WriteMessage(websocket.CloseMessage, []byte{})
+			}
+		case <-ticker.C:
+			if err := c.socket.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+				return
+			}
 		}
 	}
 }
@@ -160,28 +195,13 @@ func (c *Client) remoteRun(req Request, cmd string) {
 	c.response.Data.CurrentLine = c.simulator.GetCurrentLine()
 
 	resp, err := json.Marshal(c.response)
+
 	if err != nil {
 		fmt.Println("Error marshalling console output for browser")
 	} else {
 		c.socket.WriteMessage(websocket.TextMessage, resp)
-	}
-
-	// clear response
-	c.response = Response{}
-}
-
-func (c *Client) write() {
-	defer func() {
-		c.socket.Close()
-	}()
-
-	for {
-		select {
-		case _, ok := <-c.send:
-			if !ok {
-				c.socket.WriteMessage(websocket.CloseMessage, []byte{})
-			}
-		}
+		// clear response
+		c.response = Response{}
 	}
 }
 
